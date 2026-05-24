@@ -1,0 +1,39 @@
+# --- Vault exclusions ---
+.obsidian/
+FishingReels Project.md
+Work/
+
+# --- Environment / secrets ---
+.env
+.env.local
+**/.env
+**/.env.local
+
+# --- Dev runtime data (Postgres volumes, HLS segments, etc.) ---
+FishingReels/data/
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.db
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# --- Node / Vite ---
+node_modules/
+dist/
+.vite/
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS ---
+.DS_Store
+Thumbs.db

@@ -1,0 +1,235 @@
+# Project Structure Design
+
+**Date:** 2026-05-23
+**Status:** Approved
+**Scope:** Initial directory layout for the FishingReels codebase, the surrounding notes/docs vault, and how Docker Compose ties services together.
+
+---
+
+## Context
+
+The repository hosting these notes (the Obsidian vault) is a documentation root, not the codebase root. The codebase will live in a sibling subdirectory `FishingReels/`. This document specifies the layout of both the outer vault and the inner codebase.
+
+The stack is set: FastAPI + SQLAlchemy backend, React + TypeScript + shadcn frontend, PostgreSQL, MediaMTX for stream ingest, Nginx as the production edge. Development uses Docker Compose; production deploys to Azure (managed Postgres, container hosts TBD). The streaming design point is up to 125 concurrent SRT streams from anglers running Moblin.
+
+---
+
+## Decisions
+
+Four decisions drive the layout:
+
+1. **`apps/` + `infra/` split** inside `FishingReels/`. Application code lives in `apps/`, container/runtime config lives in `infra/`. Keeps rich app code separate from small config-only services so the root stays scannable.
+2. **TypeScript types auto-generated from OpenAPI.** FastAPI exposes `/openapi.json` for free; a frontend script generates `src/api/types.ts` from it. No shared package, no monorepo workspace tooling.
+3. **Base + override compose files.** `docker-compose.yml` holds shared service definitions, `docker-compose.override.yml` is auto-loaded in dev, `docker-compose.prod.yml` is explicit for prod.
+4. **Custom nginx Dockerfile with multi-stage build.** `infra/nginx/Dockerfile` builds the React app and bakes the static output into an `nginx:alpine` image alongside the nginx config. One immutable image ships React + nginx config together. MediaMTX and Postgres use their official images directly with mounted config and need no Dockerfile.
+
+---
+
+## Top-Level Shape
+
+The vault is a single git repository. `FishingReels Project.md`, `Work/`, and `.obsidian/` are gitignored at the vault level; everything else (including `Docs/` and `FishingReels/`) is tracked.
+
+```
+FishingReelsProject/                    # git repo root, Obsidian vault root
+├── .gitignore                          # vault-level: ignores Work/, .obsidian/, original brain-dump, .env, build artifacts
+├── FishingReels Project.md             # original brain-dump doc (gitignored)
+├── .obsidian/                          # Obsidian config (gitignored)
+├── Work/                               # working notes, plans, scratch (gitignored)
+├── Docs/                               # official docs (this file lives here)
+└── FishingReels/                       # the codebase root
+    ├── docker-compose.yml              # base service definitions
+    ├── docker-compose.override.yml     # dev overrides, auto-loaded
+    ├── docker-compose.prod.yml         # prod overrides, explicit
+    ├── .env.example                    # template; real .env is gitignored
+    ├── README.md                       # local spin-up instructions
+    ├── Makefile                        # optional: `make up`, `make logs`, etc.
+    ├── apps/
+    │   ├── frontend/                   # React app (Vite)
+    │   └── backend/                    # FastAPI app
+    ├── infra/
+    │   ├── nginx/                      # nginx.conf + Dockerfile
+    │   ├── mediamtx/                   # mediamtx.yml
+    │   └── postgres/                   # init scripts
+    └── data/                           # gitignored: pg data, hls segments (dev)
+```
+
+Notes on the top level:
+- One `.gitignore` at the vault root covers everything. No service-level `.gitignore` files are needed for now; if the codebase is ever extracted into its own repo, a child `.gitignore` can be added then.
+- `.env.example` lives at the compose root. One env file feeds the whole stack (DB credentials, MediaMTX auth, API base URL, etc.). The real `.env` is gitignored.
+- `data/` exists only in dev. Production puts Postgres data and HLS segments on host-mounted disks outside the repo.
+- The `Makefile` is optional but recommended — `make up`, `make logs`, `make migrate` beats remembering long `docker compose -f ... -f ...` invocations.
+
+---
+
+## `infra/`
+
+```
+infra/
+├── nginx/
+│   ├── Dockerfile              # multi-stage: builds React, bakes into nginx
+│   ├── nginx.conf              # top-level config
+│   └── conf.d/
+│       └── fishingreels.conf   # routes: /, /api/*, /streams/*
+│
+├── mediamtx/
+│   └── mediamtx.yml            # ingest paths, HLS output dir, auth
+│
+└── postgres/
+    └── init/
+        └── 01-init.sql         # roles/extensions (schema is owned by Alembic)
+```
+
+### Nginx Dockerfile flow
+
+The nginx image is the production edge. Its Dockerfile is the only one in `infra/` and does a multi-stage build:
+
+```dockerfile
+# Stage 1: build React
+FROM node:20-alpine AS frontend-build
+WORKDIR /app
+COPY apps/frontend/package*.json ./
+RUN npm ci
+COPY apps/frontend/ ./
+RUN npm run build               # produces /app/dist
+
+# Stage 2: nginx serving the built app
+FROM nginx:alpine
+COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY infra/nginx/conf.d/ /etc/nginx/conf.d/
+COPY --from=frontend-build /app/dist /usr/share/nginx/html
+```
+
+The build context is the repo root so it can reach both `apps/frontend/` and `infra/nginx/`. In compose:
+
+```yaml
+nginx:
+  build:
+    context: .
+    dockerfile: infra/nginx/Dockerfile
+```
+
+### MediaMTX and Postgres
+
+Both use official images with bind-mounted config:
+
+```yaml
+mediamtx:
+  image: bluenviron/mediamtx:latest
+  volumes:
+    - ./infra/mediamtx/mediamtx.yml:/mediamtx.yml:ro
+    - ./data/hls:/recordings           # MediaMTX writes HLS here
+  ports:
+    - "8554:8554"                       # SRT/RTSP ingest
+    - "8888:8888"                       # HLS (dev only; prod via nginx)
+
+postgres:
+  image: postgres:16-alpine
+  volumes:
+    - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    - ./data/postgres:/var/lib/postgresql/data
+  env_file: .env
+```
+
+**HLS sharing:** MediaMTX writes to `./data/hls/` on the host. Nginx reads from the same path (mounted into the nginx container at `/var/streams`). One source of truth on disk, two readers, no copying.
+
+---
+
+## `apps/`
+
+### `apps/backend/` (FastAPI)
+
+```
+apps/backend/
+├── Dockerfile
+├── pyproject.toml              # deps via uv or poetry
+├── alembic.ini
+├── alembic/
+│   ├── env.py
+│   └── versions/               # migration files
+├── app/
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI app, mounts routers
+│   ├── core/
+│   │   ├── config.py           # pydantic-settings, reads env
+│   │   └── db.py               # async engine, session factory
+│   ├── models/                 # SQLAlchemy ORM models
+│   ├── schemas/                # Pydantic request/response models
+│   ├── api/
+│   │   ├── deps.py             # auth, db session deps
+│   │   └── routes/             # one file per resource (anglers, streams, events, ...)
+│   └── services/               # business logic, kept out of routes
+└── tests/
+    ├── conftest.py
+    └── ...
+```
+
+**Layered split:** `models/` (DB) → `schemas/` (wire format) → `services/` (logic) → `routes/` (HTTP). Each layer depends only on the ones below it. Routes stay thin; services are testable without spinning up HTTP.
+
+**Async:** with `asyncpg` (prod) and `aiosqlite` (dev), `core/db.py` exposes an `AsyncSession` factory; `services/` and `routes/` are `async def`.
+
+### `apps/frontend/` (React + Vite + shadcn)
+
+```
+apps/frontend/
+├── Dockerfile.dev              # `npm run dev` for compose
+├── package.json
+├── tsconfig.json
+├── vite.config.ts              # dev proxy: /api → backend, /streams → mediamtx
+├── tailwind.config.ts
+├── postcss.config.js
+├── components.json             # shadcn config
+├── index.html
+├── public/
+└── src/
+    ├── main.tsx
+    ├── App.tsx
+    ├── routes/                 # react-router pages
+    ├── components/
+    │   ├── ui/                 # shadcn-installed primitives
+    │   └── ...                 # app components (StreamCard, AnglerProfile, ...)
+    ├── lib/
+    │   └── utils.ts            # cn() helper + small utilities
+    ├── api/
+    │   ├── client.ts           # fetch wrapper
+    │   └── types.ts            # AUTO-GENERATED from /openapi.json (do not edit)
+    ├── hooks/
+    └── styles/
+        └── globals.css         # Tailwind directives + CSS vars
+```
+
+**OpenAPI sync:** `package.json` gets a script `"gen:api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/types.ts"`. Run after backend schema changes. Wiring it into a pre-commit hook or watch script is a later refinement.
+
+---
+
+## Dev Compose Data Flow
+
+In dev, nginx is **not** in the stack. Vite is the edge:
+
+```
+Browser
+  ├── http://localhost:5173        → Vite dev server (HMR)
+  │     ├── proxies /api/*         → backend:8000
+  │     └── proxies /streams/*     → mediamtx:8888 (HLS)
+  └── http://localhost:8000/docs   → FastAPI Swagger UI (direct access)
+```
+
+- Backend container bind-mounts `apps/backend/` for `uvicorn --reload`.
+- Frontend container bind-mounts `apps/frontend/` for Vite HMR.
+- MediaMTX writes HLS to `./data/hls/`; serves them on `:8888` in dev. In prod, nginx serves them.
+
+Prod compose (`docker-compose.yml` + `docker-compose.prod.yml`) puts nginx in front of everything: it serves the baked-in React build at `/`, proxies `/api/*` to FastAPI, and serves HLS segments from `/streams/*` directly off disk.
+
+---
+
+## Out of Scope
+
+The following are deliberately not specified here and will be designed separately:
+
+- **Auth model.** No decision yet on session vs JWT, identity provider, or how angler-vs-fan roles are represented.
+- **Production deploy topology.** Azure-specific orchestration (App Service vs Container Apps vs AKS), managed Postgres setup, secret management, TLS termination.
+- **Observability.** Logging, metrics, tracing, and the MediaMTX/nginx telemetry stack.
+- **CI/CD.** Build pipelines, image registry, deploy automation.
+- **Frontend routing and state management specifics.** Router choice (React Router assumed but not pinned), data-fetching library (TanStack Query likely but unconfirmed).
+- **Data model.** Specific tables, relationships, and migrations.
+
+Each of these gets its own spec when the time comes.
