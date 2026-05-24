@@ -1,4 +1,4 @@
-.PHONY: up down logs ps shell-backend shell-db migrate test rebuild clean
+.PHONY: up down logs ps shell-backend shell-db migrate test rebuild clean gen-api
 
 up:
 	docker compose up -d --build
@@ -29,3 +29,6 @@ rebuild:
 
 clean:
 	docker compose down -v
+
+gen-api:
+	docker compose exec frontend npm run gen:api

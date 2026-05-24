@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(n --lts)",
+      "Bash(n ls *)",
+      "Bash(make ps *)",
+      "Bash(curl *)",
+      "Bash(make down *)",
+      "Bash(docker compose *)",
+      "Bash(npm install *)",
+      "Bash(make clean *)",
+      "Bash(make up *)",
+      "Bash(break)",
+      "Bash(node -e \"console.log\\(typeof __dirname\\)\")",
+      "Bash(timeout 120 bash *)",
+      "Bash(npm run *)",
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./components.json'\\), null, 2\\)\\)\")",
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\), null, 2\\)\\)\")",
+      "Bash(npx tailwindcss *)",
+      "Bash(git -C /Users/dakotafischer/dev/FishingReelsProject/FishingReels status --short)"
+    ]
+  }
+}

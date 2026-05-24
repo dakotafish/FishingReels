@@ -42,29 +42,31 @@ Type-safe settings loaded from `.env` / environment variables, validated at star
 
 ---
 
-## Frontend (planned, not yet built)
+## Frontend
 
 ### React + TypeScript
-The user-facing app.
+The user-facing app. Built via Vite 8 + create-vite (modern flat ESLint + split tsconfig layout).
 
 ### Vite — build tool and dev server
 **Choice:** Vite.
 **Why:** Fast HMR, minimal config, the right fit for a SPA where we control routing and serving (no SSR required for our use case).
 **Alternative considered:** Next.js — overkill given no SSR requirement.
 
-### Tailwind CSS — styling
-Utility-first CSS.
+### Tailwind CSS v4 — styling
+Utility-first CSS via the `@tailwindcss/vite` plugin. CSS-first configuration — no `tailwind.config.ts` file; theme tokens live in `src/index.css` under an `@theme inline` block.
 
 ### shadcn/ui — component library
-**Choice:** shadcn/ui on Radix primitives.
+**Choice:** shadcn/ui on Radix primitives, initialized with a neutral base palette via `npx shadcn@latest init` (shadcn 4.8.0).
 **Why:** Copy-paste components we own rather than a black-box library; pairs naturally with Tailwind.
+Uses the `cn()` helper at `src/lib/utils.ts` (clsx + tailwind-merge) for class composition. Components installed via `npx shadcn@latest add <name>` land in `src/components/ui/`.
 
 ### openapi-typescript — type sync with backend
-TypeScript types for the API surface are generated from FastAPI's `/openapi.json` via `openapi-typescript` and written to `apps/frontend/src/api/types.ts`. No hand-maintained shared types package, no monorepo workspace tooling.
+TypeScript types for the API surface are generated from FastAPI's `/openapi.json` via `openapi-typescript` and written to `apps/frontend/src/api/types.ts`. Run via `make gen-api` (which `docker compose exec`s the frontend container to call `npm run gen:api`); regenerate after backend schema changes. No hand-maintained shared types package, no monorepo workspace tooling.
 **Alternative considered:** Hand-maintained shared types package — more moving parts, drift risk.
+**Note:** Currently installed with `--legacy-peer-deps` in `Dockerfile.dev` because `openapi-typescript@7.x` ships a `peerDep: typescript@^5.x` while the project uses TS 6. The tool works correctly with TS 6 at runtime; the peer-dep constraint is overly conservative. Revisit if a future change makes a more targeted fix (e.g., `overrides` in `package.json`) feasible.
 
-### react-router — routing
-Routes live in `apps/frontend/src/routes/`. (Other state-management / data-fetching choices like TanStack Query are not yet decided.)
+### react-router — routing *(planned — will be added when the app gains a second route)*
+The home page currently lives directly in `src/App.tsx`; once a second route exists, routes move to `apps/frontend/src/routes/` and `react-router` mounts in `App.tsx`. Other state-management / data-fetching choices like TanStack Query are not yet decided.
 
 ---
 
