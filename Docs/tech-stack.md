@@ -81,13 +81,17 @@ The home page currently lives directly in `src/App.tsx`; once a second route exi
 ### PostgreSQL 16-alpine
 Official image, configured via env vars (loaded from `.env` via `env_file:`) and bind-mounted `infra/postgres/init/` for first-run init scripts. Dev data lives at `./data/postgres/` (gitignored, bind-mounted into the container at `/var/lib/postgresql/data`). Healthcheck via `pg_isready`; the backend `depends_on` postgres with `condition: service_healthy` so it won't start until the database is ready.
 
-### MediaMTX — stream ingest *(planned — added in Plan 3)*
-Official `bluenviron/mediamtx` image. Designed for up to 125 concurrent SRT streams from anglers running Moblin; writes HLS segments to `./data/hls/`.
+### MediaMTX — stream ingest
+Official `bluenviron/mediamtx:latest` image, configured via `infra/mediamtx/mediamtx.yml`. Accepts SRT publishes on UDP port 8890; serves HLS on port 8888 (dev only — prod will hide the HLS port and let nginx serve segments from disk). HLS segments persist to `./data/hls/` on the host via a bind mount, mounted into the container at `/recordings`. RTSP / RTMP / WebRTC are disabled in the config to minimize attack surface. Stats API at port 9997 (dev only; auth required by default since v1.18+).
 
-### Nginx — production edge *(planned — added in Plan 3)*
-Custom multi-stage `Dockerfile` at `infra/nginx/Dockerfile`. Stage 1 builds the React app from `apps/frontend/`; stage 2 copies the built `dist/` into `nginx:alpine` alongside the nginx config. Produces a single immutable image that serves the SPA, proxies `/api/*` to FastAPI, and serves HLS segments from `/streams/*`.
+### Nginx — production edge
+Custom multi-stage `Dockerfile` at `infra/nginx/Dockerfile`. Stage 1 (`node:22-alpine` builder) runs `npm ci --legacy-peer-deps` and `npm run build` against `apps/frontend/`; stage 2 (`nginx:alpine`) removes the stock `default.conf`, copies in `infra/nginx/nginx.conf` + `infra/nginx/conf.d/fishingreels.conf`, and copies the built `dist/` into `/usr/share/nginx/html`. Produces a single immutable image that serves the SPA at `/`, proxies `/api/*` to the FastAPI service via `upstream backend { server backend:8000; }` (compose DNS), and serves HLS segments at `/streams/*` from a read-only bind mount of `./data/hls/` at `/var/streams/`.
 
-In dev, nginx is **not** in the stack — Vite is the edge and proxies `/api/*` and `/streams/*` itself.
+The build context is the repo root (`.` in `docker-compose.prod.yml`) so the builder stage can reach `apps/frontend/` and the final stage can reach `infra/nginx/`. A repo-root `.dockerignore` excludes `node_modules/`, `data/`, `.venv/`, `.env*`, etc. to keep the build context small.
+
+In dev, nginx is **not** in the stack — Vite is the edge and proxies `/api/*` and `/streams/*` itself. The prod stack is opt-in via `make prod-up` (which runs `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`); the dev `docker-compose.override.yml` is not auto-loaded when explicit `-f` flags are passed, so backend/postgres host ports are absent in prod and only nginx (`:80`) and MediaMTX SRT (`:8890/udp`) are publicly exposed.
+
+**Currently HTTP-only on port 80.** TLS / HTTPS is a future deployment concern (cert source, renewal, prod hostname).
 
 ---
 
