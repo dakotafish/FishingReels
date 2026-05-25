@@ -1,4 +1,4 @@
-.PHONY: up down logs ps shell-backend shell-db migrate test rebuild clean gen-api
+.PHONY: up down logs ps shell-backend shell-db migrate test rebuild clean gen-api prod-up prod-down prod-logs prod-rebuild
 
 up:
 	docker compose up -d --build
@@ -32,3 +32,15 @@ clean:
 
 gen-api:
 	docker compose exec frontend npm run gen:api
+
+prod-up:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+prod-down:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+
+prod-logs:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f
+
+prod-rebuild:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache

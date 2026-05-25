@@ -1,0 +1,30 @@
+# MediaMTX config — SRT ingest, HLS serve, segments persisted to disk
+# Reference: https://github.com/bluenviron/mediamtx
+
+# --- Disable protocols we don't use ---
+rtsp: no
+rtmp: no
+webrtc: no
+
+# --- SRT ingest ---
+srt: yes
+srtAddress: :8890
+
+# --- HLS server (dev: serves segments directly; prod: nginx reads from disk) ---
+hls: yes
+hlsAddress: :8888
+hlsAlwaysRemux: yes
+hlsVariant: lowLatency
+hlsSegmentDuration: 1s
+hlsPartDuration: 200ms
+hlsSegmentCount: 7
+hlsDirectory: /recordings
+
+# --- API (read-only stats/health) ---
+api: yes
+apiAddress: :9997
+
+# --- Paths: accept any incoming stream name from publishers ---
+paths:
+  all_others:
+    # No auth in dev. Production should set publishUser/publishPass on specific paths.

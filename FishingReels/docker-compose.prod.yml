@@ -1,0 +1,39 @@
+# Production overrides — opt-in via:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+#
+# Note: when you pass explicit -f flags, docker-compose.override.yml is NOT
+# auto-loaded. So the dev ports / bind mounts / --reload from override.yml
+# are simply absent here — we don't need to "undo" them.
+#
+# This file adds the nginx edge service, disables the dev-only `frontend`
+# Vite service, and exposes only the public ports (nginx :80 and MediaMTX
+# SRT :8890). Backend and postgres stay internal-only (no ports defined in
+# the base compose, so no host port exposure happens in prod).
+
+services:
+  # Frontend (Vite dev server): not used in prod. The React build is baked
+  # into the nginx image, so this service is disabled entirely via an
+  # unselected profile.
+  frontend:
+    profiles:
+      - donotstart
+
+  # MediaMTX: expose only the SRT publish port. HLS is served by nginx
+  # from the shared ./data/hls/ volume, so MediaMTX's HLS port stays internal.
+  mediamtx:
+    ports:
+      - "8890:8890/udp"   # SRT publish (clients connect here)
+
+  # Nginx: the public edge
+  nginx:
+    build:
+      context: .
+      dockerfile: infra/nginx/Dockerfile
+    depends_on:
+      - backend
+      - mediamtx
+    ports:
+      - "80:80"
+    volumes:
+      - ./data/hls:/var/streams:ro
+    restart: unless-stopped

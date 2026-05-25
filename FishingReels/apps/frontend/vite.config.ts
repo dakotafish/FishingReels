@@ -6,6 +6,7 @@ import path from 'path'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiTarget = env.VITE_API_TARGET || 'http://localhost:8000'
+  const streamsTarget = env.VITE_STREAMS_TARGET || 'http://localhost:8888'
 
   return {
     plugins: [react(), tailwindcss()],
@@ -21,6 +22,11 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: apiTarget,
           changeOrigin: true,
+        },
+        '/streams': {
+          target: streamsTarget,
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/streams/, ''),
         },
       },
     },

@@ -33,3 +33,10 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    volumes:
+      - ./infra/mediamtx/mediamtx.yml:/mediamtx.yml:ro
+      - ./data/hls:/recordings
+    restart: unless-stopped
