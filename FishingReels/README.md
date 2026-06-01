@@ -74,4 +74,4 @@ Phones run Moblin and publish via SRT to `srt://<host>:8890?streamid=publish:<st
 
 - **Day-to-day recipes** (adding deps, migrations, debugging, gotchas): [`../Docs/dev-guide.md`](../Docs/dev-guide.md)
 - **Tech stack & rationale**: [`../Docs/tech-stack.md`](../Docs/tech-stack.md)
-- **Project structure design**: [`../Docs/2026-05-23-project-structure-design.md`](../Docs/2026-05-23-project-structure-design.md)
+- **Project structure design**: [`../Docs/2026-05-23-project-structure-design.md`](Project-structure-design.md)

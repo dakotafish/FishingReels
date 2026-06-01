@@ -1,6 +1,6 @@
 # Tech Stack
 
-The tools and frameworks chosen for the FishingReels project, with a brief note on why each was selected. For the higher-level directory layout and how these pieces fit together, see [the project structure design](./2026-05-23-project-structure-design.md).
+The tools and frameworks chosen for the FishingReels project, with a brief note on why each was selected. For the higher-level directory layout and how these pieces fit together, see [the project structure design](Project-structure-design.md).
 
 This document is a living reference — update it when a tool choice changes.
 
