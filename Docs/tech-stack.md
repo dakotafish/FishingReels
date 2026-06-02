@@ -24,11 +24,9 @@ This document is a living reference — update it when a tool choice changes.
 **Choice:** SQLAlchemy 2.x with the async session API.
 **Why:** Most mature Python ORM, with first-class async support since 2.0. Pairs cleanly with FastAPI's async handlers.
 
-### asyncpg + aiosqlite — DB drivers
-- **Prod:** `asyncpg` against PostgreSQL.
-- **Dev / local tests:** `aiosqlite` (no Postgres needed for unit tests).
-
-The `DATABASE_URL` env var switches between them without code changes.
+### asyncpg — DB driver
+**Choice:** `asyncpg` against PostgreSQL in every environment — dev, tests, and prod.
+**Why:** A single driver and dialect everywhere means tests exercise the same database behavior as production, with no SQLite/Postgres dialect gaps to mask bugs. Dev and tests run against the dockerized Postgres; `DATABASE_URL` is required (no fallback driver).
 
 ### Alembic — migrations
 **Choice:** Alembic with the async template (`alembic init -t async`).

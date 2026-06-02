@@ -43,7 +43,7 @@ erDiagram
     Sponsor ||--o{ SponsorAsset : has
     Tourney ||--o{ TourneySponsor : has
     TourneySponsor }o--|| Sponsor : is
-    SponsorAsset }|--o| SponsorAssetType : has
+    SponsorAsset }o--|| SponsorAssetType : has
     
     League }o--o{ Angler : contains
     League ||--o{ LeagueEvent : contains

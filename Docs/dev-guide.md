@@ -70,8 +70,7 @@ Components land in `src/components/ui/`. Browse the catalog: https://ui.shadcn.c
 ## Running tests
 
 ```bash
-make test                                        # backend pytest in container (Postgres)
-cd FishingReels/apps/backend && uv run pytest    # backend pytest on host (SQLite default)
+make test    # backend pytest in container, against the dockerized Postgres
 ```
 
 Frontend test framework not yet set up.
@@ -90,7 +89,7 @@ docker compose exec <svc> <cmd>          # one-off command in any container
 ## Common gotchas
 
 - **Named volume staleness.** After editing `pyproject.toml` or `package.json`, run `make clean` before `make up` — otherwise the `backend_venv` / `frontend_node_modules` named volumes still hold the old deps.
-- **`apps/backend/dev.db` appears** when running pytest on the host (default SQLite fallback when `DATABASE_URL` isn't set). Gitignored via `*.db`; safe to delete.
+- **`DATABASE_URL` is required.** There is no SQLite fallback — the backend reads `DATABASE_URL` (from `.env` in the container) and fails fast if it's unset. Run tests via `make test` so they hit the dockerized Postgres.
 - **`.env` is gitignored.** New devs run `cp .env.example .env` once during setup.
 - **`docker-compose.override.yml`** is auto-loaded for `make up` but NOT for `make prod-up` (which passes explicit `-f` flags). Dev-only ports / bind mounts / `--reload` belong in the override.
 - **Adding a new compose service:** put shared definition in `docker-compose.yml`, dev-only concerns (ports, source mounts, env) in `docker-compose.override.yml`, prod-only concerns in `docker-compose.prod.yml`.

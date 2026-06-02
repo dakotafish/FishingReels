@@ -38,13 +38,13 @@ Also see [`FishingReels/README.md`](FishingReels/README.md) for spin-up and the 
 
 Outside the container:
 
-- **Backend tests on host:** `cd apps/backend && uv run pytest` — uses SQLite (no Postgres needed). Single test: `uv run pytest tests/test_health.py::<name>`. `pytest-asyncio` runs in `asyncio_mode = "auto"`, so async tests need no `@pytest.mark.asyncio`. Host runs leave a gitignored `apps/backend/dev.db`.
+- **Backend tests:** `make test` runs pytest in the backend container against the dockerized Postgres — there is no SQLite/host fallback (`DATABASE_URL` is required). Single test: `docker compose exec backend pytest tests/test_health.py::<name>`. `pytest-asyncio` runs in `asyncio_mode = "auto"`, so async tests need no `@pytest.mark.asyncio`.
 - **Frontend lint / build:** `cd apps/frontend && npm run lint` / `npm run build` (`tsc -b && vite build`). No frontend test framework yet.
 - **Create a migration:** `docker compose exec backend alembic revision --autogenerate -m "<msg>"` after editing a model — then update [`Docs/ER_Diagram.md`](Docs/ER_Diagram.md) to reflect the schema change.
 
 ## Architecture
 
-**Backend — layered, async.** `app/` splits into `models/` (SQLAlchemy ORM) → `schemas/` (Pydantic wire format) → `services/` (business logic) → `api/routes/` (HTTP). Each layer depends only on those below it; routes stay thin and services are testable without HTTP. Everything is `async def`: `core/db.py` exposes an `AsyncSession` factory, and `DATABASE_URL` switches drivers (`asyncpg` in prod, `aiosqlite` in dev/tests) with no code changes. Routers mount under `/api` (`app.include_router(..., prefix="/api")`).
+**Backend — layered, async.** `app/` splits into `models/` (SQLAlchemy ORM) → `schemas/` (Pydantic wire format) → `services/` (business logic) → `api/routes/` (HTTP). Each layer depends only on those below it; routes stay thin and services are testable without HTTP. Everything is `async def`: `core/db.py` exposes an `AsyncSession` factory driven by `DATABASE_URL` (required — `asyncpg`/Postgres in every environment, including dev and tests). Routers mount under `/api` (`app.include_router(..., prefix="/api")`).
 
 **Frontend — types flow from the backend.** `apps/frontend/src/api/types.ts` is **auto-generated** from FastAPI's `/openapi.json` via `make gen-api` — never hand-edit it; regenerate after any backend schema change. There is no shared types package and no monorepo tooling. Styling is Tailwind v4 (CSS-first config in `src/index.css`, no `tailwind.config.ts`) with shadcn/ui primitives in `src/components/ui/` (`npx shadcn@latest add <name>`); compose classes with `cn()` from `src/lib/utils.ts`.
 

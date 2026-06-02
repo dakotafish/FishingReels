@@ -165,7 +165,7 @@ apps/backend/
 
 **Layered split:** `models/` (DB) → `schemas/` (wire format) → `services/` (logic) → `routes/` (HTTP). Each layer depends only on the ones below it. Routes stay thin; services are testable without spinning up HTTP.
 
-**Async:** with `asyncpg` (prod) and `aiosqlite` (dev), `core/db.py` exposes an `AsyncSession` factory; `services/` and `routes/` are `async def`.
+**Async:** with `asyncpg` against Postgres in every environment (dev, tests, prod), `core/db.py` exposes an `AsyncSession` factory; `services/` and `routes/` are `async def`.
 
 ### `apps/frontend/` (React + Vite + shadcn)
 
