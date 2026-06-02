@@ -29,7 +29,6 @@ erDiagram
     TourneyParticipant }o--|| Angler : is
     TourneyParticipant ||--o{ TourneyParticipantCatch : has
     TourneyParticipantCatch }o--|| TourneyDay : has
-    TourneyParticipantCatch }o--|| TourneyParticipantCatchType : has
     TourneyParticipantCatch ||--o| TourneyParticipantCatchHighlight : has
     TourneyParticipantCatchHighlight ||--|| Highlight : has
     TourneyParticipant ||--o{ TourneyParticipantPenalty : has
@@ -43,18 +42,25 @@ erDiagram
     Sponsor ||--o{ SponsorAsset : has
     Tourney ||--o{ TourneySponsor : has
     TourneySponsor }o--|| Sponsor : is
-    SponsorAsset }o--|| SponsorAssetType : has
     
-    League }o--o{ Angler : contains
+    League ||--o{ LeagueAngler : has
+    LeagueAngler }o--|| Angler : is
     League ||--o{ LeagueEvent : contains
     LeagueEvent |o--o| Tourney : is
     League ||--o{ LeagueHighlight : has
     LeagueHighlight ||--|| Highlight : is
     
-    User }o--|| UserType : has
     User ||--o| AnglerUser : is 
     AnglerUser ||--|| Angler : is
     User ||--o{ TourneyStaff : is 
     TourneyStaff }o--|| Tourney : has
 ```
+
+## Conventions
+
+- **Primary keys:** every table uses a UUID primary key.
+- **Enum columns (not lookup tables):** the following are modeled as enum columns on their parent entity rather than separate tables, so they don't appear as entities above:
+  - `User.user_type` — `angler` | `tourney` | `admin`
+  - `SponsorAsset.asset_type`
+  - `TourneyParticipantCatch.catch_type`
 
