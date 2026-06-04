@@ -4,6 +4,19 @@
 title: Fishing Reels Model
 ---
 erDiagram
+    Angler {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        varchar display_name "120"
+        varchar slug UK "80, unique, lowercased"
+        text bio "nullable"
+        varchar avatar_url "2048, nullable"
+        angler_status status "default active"
+        varchar home_state "2, US state code, nullable"
+        varchar home_town "100, nullable"
+    }
+
     Angler ||--o{ AnglerStream : has
     AnglerStream }o--|| Stream : has
     
@@ -60,6 +73,7 @@ erDiagram
 
 - **Primary keys:** every table uses a UUID primary key.
 - **Enum columns (not lookup tables):** the following are modeled as enum columns on their parent entity rather than separate tables, so they don't appear as entities above:
+  - `Angler.status` — `active` | `hidden` | `archived` (native PG enum `angler_status`)
   - `User.user_type` — `angler` | `tourney` | `admin`
   - `SponsorAsset.asset_type`
   - `TourneyParticipantCatch.catch_type`

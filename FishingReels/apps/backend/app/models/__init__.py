@@ -1,8 +1,15 @@
-# Import Base so Base.metadata is available for Alembic autogenerate.
-# As domain models are added, import each here so its Table is registered on
-# Base.metadata before alembic/env.py reads it, e.g.:
-#   from app.models.angler import Angler  # noqa: F401
+# Import Base so Base.metadata is available for Alembic autogenerate, and import
+# each domain model so its Table is registered on Base.metadata before
+# alembic/env.py reads it.
 
 from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
+from app.models.enums import AnglerStatus
+from app.models.angler import Angler
 
-__all__ = ["Base", "UUIDPrimaryKeyMixin", "TimestampMixin"]
+__all__ = [
+    "Base",
+    "UUIDPrimaryKeyMixin",
+    "TimestampMixin",
+    "AnglerStatus",
+    "Angler",
+]
