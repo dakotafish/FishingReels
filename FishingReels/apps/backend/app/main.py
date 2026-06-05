@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import health
+from app.api.routes import anglers, health
 
 app = FastAPI(title="FishingReels API")
 
@@ -11,3 +11,4 @@ async def root() -> dict[str, str]:
 
 
 app.include_router(health.router, prefix="/api")
+app.include_router(anglers.router, prefix="/api")
