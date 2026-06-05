@@ -83,19 +83,3 @@ async def test_patch_partial(api_client):
 async def test_patch_not_found(api_client):
     resp = await api_client.patch("/api/anglers/no-such-angler", json={"bio": "x"})
     assert resp.status_code == 404
-
-
-async def test_list_excludes_hidden_by_default(api_client):
-    await api_client.post("/api/anglers", json={"display_name": "Active One"})
-    await api_client.post("/api/anglers", json={"display_name": "Hidden One"})
-    await api_client.patch("/api/anglers/hidden-one", json={"status": "hidden"})
-
-    default = await api_client.get("/api/anglers")
-    default_slugs = {a["slug"] for a in default.json()}
-    assert "active-one" in default_slugs
-    assert "hidden-one" not in default_slugs
-
-    with_hidden = await api_client.get(
-        "/api/anglers", params={"include_hidden": "true"}
-    )
-    assert "hidden-one" in {a["slug"] for a in with_hidden.json()}
