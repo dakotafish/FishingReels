@@ -73,6 +73,21 @@
     --shadow-card: 8px 8px 0 0 var(--cl-shadow-teal);
     --shadow-card-sm: 5px 5px 0 0 var(--cl-shadow-teal);
     --shadow-press: 3px 3px 0 0 var(--cl-shadow-teal);
+
+    /* ---- Live-badge pulse (utility: animate-cl-pulse) ---- */
+    --animate-cl-pulse: cl-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes cl-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.25;
+        transform: scale(0.7);
+    }
 }
 
 :root {
