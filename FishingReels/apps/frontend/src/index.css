@@ -1,130 +1,181 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
-
-@custom-variant dark (&:is(.dark *));
+@import "@fontsource-variable/rethink-sans";
+@import "@fontsource-variable/epilogue";
+@import "@fontsource/bbh-hegarty";
 
 @theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
+    /* ---- Type families (Castline) ---- */
+    --font-sans: 'Epilogue Variable', system-ui, sans-serif; /* body + UI */
+    --font-display: 'Rethink Sans Variable', system-ui, sans-serif; /* headlines, names, stats */
+    --font-heading: var(--font-display);
+    --font-label: 'Epilogue Variable', system-ui, sans-serif; /* ALL-CAPS eyebrows/nav/buttons */
+    --font-accent: 'BBH Hegarty', 'Rethink Sans Variable', cursive; /* brushy personality, rare */
+
+    /* ---- shadcn semantic colors (resolve to :root vars below) ---- */
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    /* ---- Castline brand palette → utilities (bg-cl-sky, text-cl-ink, border-cl-ink, …) ---- */
+    --color-cl-sky: var(--cl-sky);
+    --color-cl-ink: var(--cl-ink);
+    --color-cl-paper: var(--cl-paper);
+    --color-cl-flame: var(--cl-flame);
+    --color-cl-moss: var(--cl-moss);
+    --color-cl-seafoam: var(--cl-seafoam);
+    --color-cl-gold: var(--cl-gold);
+    --color-cl-carbon: var(--cl-carbon);
+    --color-cl-sand: var(--cl-sand);
+    --color-cl-paper-warm: var(--cl-paper-warm);
+    --color-cl-deep-blue: var(--cl-deep-blue);
+    --color-cl-mint-text: var(--cl-mint-text);
+    --color-cl-near-black: var(--cl-near-black);
+    --color-cl-danger: var(--cl-danger);
+
+    /* ---- Radii — literal Castline values (Q5: no calc model) ---- */
+    --radius-sm: 6px; /* chips, small buttons */
+    --radius-md: 10px; /* buttons, inputs, stat boxes */
+    --radius-lg: 16px; /* cards, panels, players */
+    --radius-xl: 28px; /* large feature cards */
+    --radius-pill: 999px; /* badges, chips, segmented toggles */
+
+    /* ---- Hard offset shadows (signature, blur-free — never on video) ---- */
+    --shadow-card: 8px 8px 0 0 var(--cl-shadow-teal);
+    --shadow-card-sm: 5px 5px 0 0 var(--cl-shadow-teal);
+    --shadow-press: 3px 3px 0 0 var(--cl-shadow-teal);
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    /* ===== Castline core palette — 8 brand swatches; oklch (source hex in comment) ===== */
+    --cl-sky: oklch(0.7600 0.0684 229.01); /* #83BAD4 — primary brand blue */
+    --cl-ink: oklch(0.3276 0.0370 234.29); /* #213845 — deep teal, text/borders */
+    --cl-paper: oklch(0.9840 0.0147 80.71); /* #FFF9EF — warm cream ground */
+    --cl-flame: oklch(0.6655 0.1631 41.06); /* #E46B3B — CTA / live accent */
+    --cl-moss: oklch(0.5165 0.0703 134.14); /* #577147 — field green feature */
+    --cl-seafoam: oklch(0.8522 0.0333 174.82); /* #B9D6CD — pale mint surfaces */
+    --cl-gold: oklch(0.8395 0.1546 93.02); /* #EDC73B — sunlit yellow, sparingly */
+    --cl-carbon: oklch(0.2189 0.0065 78.18); /* #1C1A17 — near-black, video well */
+
+    /* ===== Support palette ===== */
+    --cl-sand: oklch(0.9126 0.0276 83.54); /* #EBE1CE — tan paper, alt fills */
+    --cl-paper-warm: oklch(0.9788 0.0192 80.12); /* #FFF7EA — warmer paper tint */
+    --cl-shadow-teal: oklch(0.3294 0.0466 217.57); /* #143B45 — hard-shadow color only */
+    --cl-deep-blue: oklch(0.5139 0.0941 238.72); /* #296E97 — muted links/captions */
+    --cl-mint-text: oklch(0.8621 0.0729 151.46); /* #AFE0BA — body copy on moss */
+    --cl-near-black: oklch(0.2782 0.0079 334.35); /* #2B272A — nav/label text on light */
+
+    /* ===== Functional/system token — outside the 8 brand bands (Q2) ===== */
+    --cl-danger: oklch(0.5433 0.1740 29.70); /* #C0392B — destructive actions only */
+
+    /* ===== shadcn semantic vars mapped onto Castline ===== */
+    --background: var(--cl-paper);
+    --foreground: var(--cl-ink);
+    --card: var(--cl-paper);
+    --card-foreground: var(--cl-ink);
+    --popover: var(--cl-paper);
+    --popover-foreground: var(--cl-ink);
+    --primary: var(--cl-ink); /* Q1: default Button is ink; flame is a CTA variant */
+    --primary-foreground: var(--cl-paper);
+    --secondary: var(--cl-sand);
+    --secondary-foreground: var(--cl-ink);
+    --muted: var(--cl-sand);
+    --muted-foreground: var(--cl-deep-blue);
+    --accent: var(--cl-sky); /* brand blue (Castline's own flame "accent" lives as --cl-flame) */
+    --accent-foreground: var(--cl-ink);
+    --destructive: var(--cl-danger); /* Q2: dedicated danger red */
+    --border: var(--cl-ink); /* heavy 2.5px ink border is applied at component level */
+    --input: var(--cl-ink);
+    --ring: var(--cl-sky); /* focus ring */
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+
+    /* charts — branded defaults (no dedicated chart palette in the system) */
+    --chart-1: var(--cl-sky);
+    --chart-2: var(--cl-moss);
+    --chart-3: var(--cl-gold);
+    --chart-4: var(--cl-flame);
+    --chart-5: var(--cl-deep-blue);
+
+    /* sidebar — mapped onto Castline */
+    --sidebar: var(--cl-paper);
+    --sidebar-foreground: var(--cl-ink);
+    --sidebar-primary: var(--cl-ink);
+    --sidebar-primary-foreground: var(--cl-paper);
+    --sidebar-accent: var(--cl-sand);
+    --sidebar-accent-foreground: var(--cl-ink);
+    --sidebar-border: var(--cl-ink);
+    --sidebar-ring: var(--cl-sky);
+
+    /* ===== Layout (Q10: two horizontal systems kept) ===== */
+    --edge-gutter: 57px; /* header / footer / live bar inset */
 }
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+@media (max-width: 640px) {
+    :root {
+        --edge-gutter: 18px;
+    }
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+    body {
+        @apply bg-background text-foreground font-sans;
     }
-  html {
-    @apply font-sans;
+}
+
+@layer components {
+    /* Centered content column for most sections. */
+    .wrap {
+        max-width: 1240px;
+        margin-inline: auto;
+        padding-inline: 72px;
+    }
+
+    @media (max-width: 980px) {
+        .wrap {
+            padding-inline: 28px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .wrap {
+            padding-inline: 18px;
+        }
+    }
+
+    /* Edge-gutter inset shared by header, footer, and live bar. */
+    .edge {
+        margin-inline: var(--edge-gutter);
     }
 }
