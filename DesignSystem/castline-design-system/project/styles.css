@@ -1,0 +1,6 @@
+/* Castline Design System — global stylesheet entrypoint.
+   Consumers link THIS one file; it pulls in the design tokens + type and the
+   web kit's component/layout styles. (The mobile exploration override at
+   mobile-options/kit/kit.css is intentionally NOT imported — it's a sandbox.) */
+@import url("./colors_and_type.css");
+@import url("./ui_kits/web/kit.css");

@@ -1,0 +1,171 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "mobile-options/**",
+              "ui_kits/web/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Rethink Sans|Epilogue|BBH Hegarty))/i]",
+        "message": "Font not provided by the design system. Available: Rethink Sans, Epilogue, BBH Hegarty."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {},
+    "tokens": [
+      "--accent",
+      "--accent-fg",
+      "--bg",
+      "--bg-alt",
+      "--bg-dark",
+      "--bg-feature",
+      "--bg-section",
+      "--carbon",
+      "--deep-blue",
+      "--ease",
+      "--edge-gutter",
+      "--fg",
+      "--fg-brand",
+      "--fg-muted",
+      "--fg-on-dark",
+      "--fg-on-dark-muted",
+      "--flame",
+      "--font-accent",
+      "--font-body",
+      "--font-display",
+      "--font-label",
+      "--gold",
+      "--ink",
+      "--link",
+      "--mint-text",
+      "--moss",
+      "--near-black",
+      "--paper",
+      "--paper-warm",
+      "--r-lg",
+      "--r-md",
+      "--r-pill",
+      "--r-sm",
+      "--r-xl",
+      "--s-1",
+      "--s-10",
+      "--s-2",
+      "--s-3",
+      "--s-4",
+      "--s-5",
+      "--s-6",
+      "--s-7",
+      "--s-8",
+      "--s-9",
+      "--sand",
+      "--seafoam",
+      "--shadow-card",
+      "--shadow-card-sm",
+      "--shadow-press",
+      "--shadow-teal",
+      "--sky",
+      "--surface",
+      "--surface-border"
+    ],
+    "tokenKinds": {
+      "--sky": "color",
+      "--ink": "color",
+      "--paper": "color",
+      "--flame": "color",
+      "--moss": "color",
+      "--seafoam": "color",
+      "--gold": "color",
+      "--carbon": "color",
+      "--sand": "color",
+      "--paper-warm": "color",
+      "--shadow-teal": "shadow",
+      "--deep-blue": "color",
+      "--mint-text": "font",
+      "--near-black": "color",
+      "--bg": "color",
+      "--bg-alt": "color",
+      "--bg-dark": "color",
+      "--bg-section": "color",
+      "--bg-feature": "color",
+      "--fg": "color",
+      "--fg-muted": "color",
+      "--fg-on-dark": "color",
+      "--fg-on-dark-muted": "color",
+      "--fg-brand": "color",
+      "--accent": "color",
+      "--accent-fg": "color",
+      "--link": "color",
+      "--surface": "color",
+      "--surface-border": "color",
+      "--font-display": "font",
+      "--font-label": "font",
+      "--font-body": "font",
+      "--font-accent": "font",
+      "--r-sm": "spacing",
+      "--r-md": "spacing",
+      "--r-lg": "spacing",
+      "--r-xl": "spacing",
+      "--r-pill": "spacing",
+      "--shadow-card": "shadow",
+      "--shadow-card-sm": "shadow",
+      "--shadow-press": "shadow",
+      "--s-1": "spacing",
+      "--s-2": "spacing",
+      "--s-3": "spacing",
+      "--s-4": "spacing",
+      "--s-5": "spacing",
+      "--s-6": "spacing",
+      "--s-7": "spacing",
+      "--s-8": "spacing",
+      "--s-9": "spacing",
+      "--s-10": "spacing",
+      "--ease": "other",
+      "--edge-gutter": "spacing"
+    },
+    "fontFamilies": [
+      "BBH Hegarty",
+      "Epilogue",
+      "Rethink Sans"
+    ]
+  }
+}

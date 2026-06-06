@@ -1,0 +1,35 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; font-family: var(--font-label); background: var(--paper); }
+  .rows { display: flex; flex-direction: column; gap: 10px; }
+  .r { display: flex; gap: 0; border-radius: 8px; overflow: hidden; border: 2px solid var(--ink); }
+  .seg { flex: 1; padding: 14px 16px; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .lbl { font-family: var(--font-body); font-size: 10px; opacity: .8; letter-spacing: .04em; display:block; margin-top:3px; text-transform: none; }
+</style>
+</head>
+<body>
+  <div class="rows">
+    <div class="r">
+      <div class="seg" style="background:#FFF9EF; color:#213845">On Paper<span class="lbl">fg ink · fg-muted deep-blue</span></div>
+      <div class="seg" style="background:#FFF9EF; color:#296E97; flex:0 0 40%">Secondary text</div>
+    </div>
+    <div class="r">
+      <div class="seg" style="background:#213845; color:#FFF9EF">On Ink<span class="lbl">fg paper · muted seafoam</span></div>
+      <div class="seg" style="background:#213845; color:#B9D6CD; flex:0 0 40%">Secondary text</div>
+    </div>
+    <div class="r">
+      <div class="seg" style="background:#577147; color:#FFF9EF">On Moss<span class="lbl">fg paper · body mint</span></div>
+      <div class="seg" style="background:#577147; color:#AFE0BA; flex:0 0 40%">Body copy</div>
+    </div>
+    <div class="r">
+      <div class="seg" style="background:#E46B3B; color:#FFF9EF">Accent / CTA<span class="lbl">flame · paper text</span></div>
+      <div class="seg" style="background:#83BAD4; color:#213845; flex:0 0 40%">Brand band</div>
+    </div>
+  </div>
+</body>
+</html>

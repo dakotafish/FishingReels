@@ -1,0 +1,30 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 30px 32px; background: var(--sand); font-family: var(--font-label); }
+  .wrap { display: flex; gap: 40px; align-items: center; }
+  .demo { width: 150px; height: 88px; background: var(--paper); border: 2.5px solid var(--ink);
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12px; letter-spacing: .06em; color: var(--ink); }
+  .s8 { box-shadow: 8px 8px 0 0 var(--shadow-teal); }
+  .s3 { box-shadow: 3px 3px 0 0 var(--shadow-teal); }
+  .txt { max-width: 230px; }
+  .h { font-family: var(--font-display); font-weight: 800; font-size: 17px; color: var(--ink); margin: 0 0 6px; }
+  .p { font-family: var(--font-body); font-size: 12.5px; line-height: 1.5; color: var(--ink); margin: 0; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="demo s8">REST · 8px</div>
+    <div class="demo s3">PRESS · 3px</div>
+    <div class="txt">
+      <p class="h">Hard offset shadow</p>
+      <p class="p">Solid, blur-free, deep-teal (#143B45). The signature lift — never soft. Not used on video players.</p>
+    </div>
+  </div>
+</body>
+</html>

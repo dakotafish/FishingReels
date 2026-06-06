@@ -1,0 +1,275 @@
+/* ============================================================
+   CASTLINE DESIGN SYSTEM — Foundations
+   Colors + Typography tokens
+   "Every Angler. Every Cast. Every Story." · Cast On.
+   ============================================================ */
+
+/* ---------- FONTS ---------- */
+@font-face {
+  font-family: "Rethink Sans";
+  src: url("fonts/RethinkSans-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Epilogue";
+  src: url("fonts/Epilogue-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  /* BBH Hegarty — brushy retro accent face. Used sparingly for
+     personality lines (e.g. an angler's signature style tags). */
+  font-family: "BBH Hegarty";
+  src: url("fonts/BBHHegarty-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  /* ============ CORE PALETTE ============ */
+  /* The eight brand swatches, in palette order. */
+  --sky:      #83BAD4;  /* primary brand blue — hero type, links, emblem */
+  --ink:      #213845;  /* deep teal — dark sections, primary text */
+  --paper:    #FFF9EF;  /* warm cream — light backgrounds, on-dark text */
+  --flame:    #E46B3B;  /* burnt orange — CTAs, live badges, accent rules */
+  --moss:     #577147;  /* field green — alt section background */
+  --seafoam:  #B9D6CD;  /* pale mint — soft surfaces, on-green text tint */
+  --gold:     #EDC73B;  /* sunlit yellow — avatars, highlights, sparingly */
+  --carbon:   #1C1A17;  /* near-black — max contrast, fine print */
+
+  /* ============ EXTENDED / SUPPORT ============ */
+  --sand:        #EBE1CE;  /* tan paper — large fills, the "Dots_Tan" field */
+  --paper-warm:  #FFF7EA;  /* slightly warmer paper tint */
+  --shadow-teal: #143B45;  /* hard offset shadow under cards & buttons */
+  --deep-blue:   #296E97;  /* darker blue — footer links, captions on cream */
+  --mint-text:   #AFE0BA;  /* mint used for body copy on moss-green */
+  --near-black:  #2B272A;  /* label/nav text on light */
+
+  /* ============ SEMANTIC ROLES ============ */
+  --bg:            var(--paper);
+  --bg-alt:        var(--sand);
+  --bg-dark:       var(--ink);
+  --bg-section:    var(--sky);
+  --bg-feature:    var(--moss);
+
+  --fg:            var(--ink);          /* primary text on light */
+  --fg-muted:      var(--deep-blue);    /* secondary text on light */
+  --fg-on-dark:    var(--paper);        /* primary text on ink/moss */
+  --fg-on-dark-muted: var(--seafoam);   /* secondary text on dark */
+  --fg-brand:      var(--sky);          /* brand-blue display text */
+
+  --accent:        var(--flame);        /* primary CTA / live */
+  --accent-fg:     var(--paper);        /* text on flame */
+  --link:          var(--deep-blue);
+
+  /* card + control surfaces */
+  --surface:       var(--paper);
+  --surface-border: var(--ink);
+
+  /* ============ TYPE FAMILIES ============ */
+  --font-display: "Rethink Sans", system-ui, sans-serif; /* big bold headlines */
+  --font-label:   "Epilogue", system-ui, sans-serif;     /* all-caps eyebrows/nav */
+  --font-body:    "Epilogue", system-ui, sans-serif;     /* paragraphs, UI */
+  --font-accent:  "BBH Hegarty", "Rethink Sans", cursive;/* brushy personality */
+
+  /* ============ RADII ============ */
+  --r-sm: 6px;    /* chips, small buttons */
+  --r-md: 10px;   /* buttons, inputs */
+  --r-lg: 16px;   /* cards */
+  --r-xl: 28px;   /* large feature cards */
+  --r-pill: 999px;
+
+  /* ============ HARD SHADOW (signature) ============ */
+  /* Castline uses a SOLID, blur-free offset shadow in deep teal —
+     never a soft blurred shadow. NOTE: reserve this for buttons and
+     interactive cards; do NOT apply it to embedded video players. */
+  --shadow-card:   8px 8px 0 0 var(--shadow-teal);
+  --shadow-card-sm: 5px 5px 0 0 var(--shadow-teal);
+  --shadow-press:  3px 3px 0 0 var(--shadow-teal);
+
+  /* ============ SPACING SCALE (8pt base) ============ */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+
+  /* standard transition */
+  --ease: 160ms cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+}
+
+/* ============================================================
+   SEMANTIC TYPE STYLES
+   Display = Rethink Sans (tight, bold, sentence case)
+   Labels/eyebrows = Epilogue ExtraBold, ALL CAPS, wide tracking
+   Body = Epilogue
+   ============================================================ */
+
+.cl-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 9.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+  color: var(--fg-brand);
+}
+
+.cl-h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+}
+
+.cl-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3.2vw, 2.85rem);
+  line-height: 1.04;
+  letter-spacing: -0.005em;
+}
+
+.cl-h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+/* Eyebrow / nav / metadata label */
+.cl-eyebrow {
+  font-family: var(--font-label);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* Stat / data figure (e.g. "52.10") */
+.cl-stat {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.cl-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* On-dark intro copy — all caps, airy tracking, generous leading */
+.cl-lede {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cl-small {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+/* Brushy personality accent (style tags, signatures) */
+.cl-accent {
+  font-family: var(--font-accent);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.4rem;
+}
+
+/* ============================================================
+   PRIMITIVE COMPONENTS
+   ============================================================ */
+
+/* Primary button — flame fill, hard teal shadow, lifts on press */
+.cl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-label);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--flame);
+  border: 2.5px solid var(--ink);
+  border-radius: var(--r-md);
+  padding: 14px 26px;
+  cursor: pointer;
+  box-shadow: var(--shadow-card-sm);
+  transition: transform var(--ease), box-shadow var(--ease);
+  text-decoration: none;
+}
+.cl-btn:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 0 var(--shadow-teal); }
+.cl-btn:active { transform: translate(3px, 3px); box-shadow: var(--shadow-press); }
+
+/* Secondary / ghost — cream fill, ink outline, flame text */
+.cl-btn--ghost {
+  background: var(--paper);
+  color: var(--flame);
+}
+
+/* On-dark outline button */
+.cl-btn--outline {
+  background: transparent;
+  color: var(--paper);
+  box-shadow: none;
+  border-color: var(--paper);
+}
+.cl-btn--outline:hover { background: var(--paper); color: var(--ink); box-shadow: none; transform: none; }
+
+/* Live badge — flame pill */
+.cl-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--flame);
+  color: var(--paper);
+  font-family: var(--font-label);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  border-radius: var(--r-pill);
+  padding: 7px 16px;
+}
+.cl-badge-live::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--paper);
+  animation: cl-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cl-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(0.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-badge-live::before { animation: none; }
+}
+
+/* Card — cream surface, ink border, hard teal shadow */
+.cl-card {
+  background: var(--surface);
+  border: 2.5px solid var(--ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+}

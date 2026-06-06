@@ -1,0 +1,24 @@
+<!-- @dsCard group="Brand" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--paper); }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .tex { height: 56px; border-radius: 8px; border: 2px solid var(--ink); background-size: cover; background-position: center; position: relative; overflow: hidden; }
+  .lbl { position: absolute; left: 12px; bottom: 9px; font-family: var(--font-label); font-weight: 800;
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
+    background: var(--paper); padding: 3px 8px; border-radius: 4px; }
+  .rules { display:flex; flex-direction:column; }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="tex" style="background-image:url('../assets/retro-lines.png'); background-color:var(--paper); background-size:100% 100%"><span class="lbl">Racing-stripe rule</span></div>
+    <div class="tex" style="background-image:url('../assets/dots-blue.png')"><span class="lbl">Dots · Blue</span></div>
+    <div class="tex" style="background-image:url('../assets/dots-tan.png'); background-color:var(--sand)"><span class="lbl">Dots · Tan</span></div>
+  </div>
+</body>
+</html>

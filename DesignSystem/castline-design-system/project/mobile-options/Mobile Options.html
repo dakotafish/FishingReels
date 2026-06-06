@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Brand" name="Mobile Options" subtitle="Nav + table reflow options at phone width" -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Castline — Mobile Layout Options</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ============ MOBILE MOCKUP STYLES (self-contained, phone-scale) ============ */
+  .ms { width: 100%; height: 100%; background: var(--paper); color: var(--ink);
+    font-family: var(--font-body); overflow: hidden; display: flex; flex-direction: column;
+    border-radius: 26px; position: relative; }
+  .ms .ic { display: inline-flex; }
+  .ms .ic svg { width: 1em; height: 1em; stroke-width: 2; }
+
+  /* status bar */
+  .ms-status { height: 34px; flex: none; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; font-family: var(--font-label); font-weight: 800; font-size: 12px; letter-spacing: .02em; }
+  .ms-status .dots { display: flex; gap: 5px; align-items: center; font-size: 13px; }
+
+  /* ---------- MOBILE HEADER ---------- */
+  .mhdr { flex: none; display: flex; align-items: center; gap: 12px; padding: 10px 16px 12px;
+    background: var(--paper); border-bottom: 2px solid rgba(33,56,69,.12); }
+  .mhdr-logo { height: 34px; }
+  .mhdr-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .mhdr-live.cl-badge-live { font-size: 10px; padding: 5px 10px; letter-spacing: .1em; }
+  .mhdr-live.cl-badge-live::before { width: 5px; height: 5px; }
+  .mhdr-burger { width: 42px; height: 42px; border: none; background: none;
+    display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: 20px; cursor: pointer; }
+  .mhdr-burger.is-open { background: none; color: var(--paper); }
+
+  /* ---------- HERO SLIVER (context) ---------- */
+  .mhero { background: var(--ink); color: var(--paper); padding: 26px 18px 30px; position: relative; overflow: hidden; flex: 1; }
+  .mhero::before { content:""; position:absolute; inset:0; background-image:url("../assets/dots-blue.png");
+    background-size: 320px; opacity:.25; mix-blend-mode:screen; }
+  .mhero-eye { position: relative; font-family: var(--font-label); font-weight: 800; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--seafoam); }
+  .mhero-title { position: relative; font-family: var(--font-display); font-weight: 800; font-size: 46px;
+    line-height: .92; color: var(--sky); margin: 12px 0 16px; letter-spacing: .01em; }
+  .mhero-lede { position: relative; font-weight: 500; font-size: 11px; line-height: 1.5; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--seafoam); margin: 0; }
+
+  /* ---------- NAV DRAWER ---------- */
+  .mdrawer { position: absolute; inset: 0; top: 34px; background: var(--ink); z-index: 20; display: flex;
+    flex-direction: column; padding: 8px 0 0; }
+  .mdrawer::before { content:""; position:absolute; inset:0; background-image:url("../assets/dots-blue.png");
+    background-size: 320px; opacity:.18; mix-blend-mode:screen; pointer-events:none; }
+  .mdrawer-bar { position: relative; display: flex; align-items: center; gap: 12px; padding: 6px 16px 16px; }
+  .mdrawer-logo { height: 30px; filter: none; }
+  .mdrawer-close { margin-left: auto; width: 42px; height: 42px; border: 2px solid var(--seafoam); border-radius: 10px;
+    background: transparent; color: var(--paper); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .mdrawer-links { position: relative; display: flex; flex-direction: column; padding: 8px 8px; }
+  .mdrawer-link { display: flex; align-items: center; gap: 14px; padding: 18px 14px; border-radius: 12px;
+    font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--paper); letter-spacing: -0.01em; }
+  .mdrawer-link .ic { font-size: 20px; color: var(--seafoam); }
+  .mdrawer-link.is-active { color: var(--sky); }
+  .mdrawer-link.is-active .ic { color: var(--sky); }
+  .mdrawer-link + .mdrawer-link { border-top: 1.5px solid rgba(185,214,205,.16); border-radius: 0; }
+  .mdrawer-foot { position: relative; margin-top: auto; padding: 18px 22px 24px; display: flex; align-items: center; gap: 14px;
+    border-top: 2px solid var(--flame); }
+  .mdrawer-search { flex: 1; display: flex; align-items: center; gap: 9px; background: var(--paper); border-radius: 999px;
+    padding: 11px 16px; color: var(--deep-blue); font-size: 13px; font-family: var(--font-body); }
+
+  /* ---------- SECTION HEAD (in-screen) ---------- */
+  .ms-scroll { flex: 1; overflow: hidden; padding: 16px 14px 20px; background: var(--sky); }
+  .ms-scroll.is-cream { background: var(--paper); }
+  .ms-shead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+  .ms-stitle { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1; color: var(--ink); margin: 0; }
+  .ms-slink { font-family: var(--font-label); font-weight: 800; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink); border-bottom: 2px solid var(--ink); padding-bottom: 2px; }
+
+  /* avatar disc (shared) */
+  .disc-wrap { border-radius: 11px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .disc { border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; }
+
+  /* ====== OPTION A: STACKED CARDS (leaderboard) ====== */
+  .lbcard { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; padding: 14px 15px;
+    box-shadow: 5px 5px 0 0 var(--shadow-teal); display: flex; flex-direction: column; gap: 12px; }
+  .lbcard + .lbcard { margin-top: 13px; }
+  .lbcard-top { display: flex; align-items: center; gap: 13px; }
+  .lbcard-rank { font-family: var(--font-display); font-weight: 800; font-size: 30px; color: var(--ink); line-height: 1; min-width: 30px; }
+  .lbcard-rank.top { color: var(--flame); }
+  .lbcard-name { font-family: var(--font-display); font-weight: 800; font-size: 21px; color: var(--ink); line-height: 1; }
+  .lbcard-sub { font-family: var(--font-label); font-weight: 800; font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--deep-blue); margin-top: 5px; }
+  .lbcard-foot { display: flex; align-items: stretch; gap: 10px; border-top: 2px solid rgba(33,56,69,.12); padding-top: 11px; }
+  .lbcard-cell { flex: 1; }
+  .lbcard-cell + .lbcard-cell { border-left: 2px solid rgba(33,56,69,.12); padding-left: 12px; }
+  .lbcard-cell b { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--deep-blue); line-height: 1; display: block; }
+  .lbcard-cell span { font-family: var(--font-label); font-weight: 800; font-size: 9px; letter-spacing: .11em;
+    text-transform: uppercase; color: var(--ink); display: block; margin-top: 5px; }
+  .lbcard-cell.wt b { color: var(--flame); }
+
+  /* ====== OPTION B: COMPACT ROWS (leaderboard) ====== */
+  .lbrows { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; overflow: hidden; }
+  .lbrows-head { display: grid; grid-template-columns: 38px 1fr 76px; gap: 10px; padding: 11px 14px; background: var(--ink);
+    color: var(--seafoam); font-family: var(--font-label); font-weight: 800; font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; }
+  .lbrows-head span:last-child { text-align: right; }
+  .lbrow { display: grid; grid-template-columns: 38px 1fr 76px; gap: 10px; padding: 12px 14px; align-items: center;
+    border-top: 2px solid rgba(33,56,69,.12); }
+  .lbrow-rank { font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--ink); line-height: 1; }
+  .lbrow-rank.top { color: var(--flame); }
+  .lbrow-ang { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .lbrow-name { font-family: var(--font-display); font-weight: 800; font-size: 17px; color: var(--ink); line-height: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lbrow-sub { font-family: var(--font-label); font-weight: 800; font-size: 9px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--deep-blue); margin-top: 4px; }
+  .lbrow-wt { text-align: right; font-family: var(--font-display); font-weight: 800; font-size: 21px; color: var(--flame); }
+  .lbrow-wt small { display: block; font-family: var(--font-label); font-size: 8px; letter-spacing: .1em;
+    color: var(--ink); margin-top: 3px; font-weight: 800; }
+
+  /* ====== ANGLERS — OPTION A: STACKED CARD ====== */
+  .acd { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; padding: 15px;
+    box-shadow: 5px 5px 0 0 var(--shadow-teal); }
+  .acd + .acd { margin-top: 13px; }
+  .acd-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .acd-stat { text-align: right; }
+  .acd-stat b { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--deep-blue); line-height: 1; display: block; }
+  .acd-stat span { font-family: var(--font-label); font-weight: 800; font-size: 9px; letter-spacing: .11em;
+    text-transform: uppercase; color: var(--ink); }
+  .acd-name { font-family: var(--font-display); font-weight: 800; font-size: 25px; color: var(--ink); margin: 13px 0 2px; line-height: 1; }
+  .acd-loc { font-size: 14px; color: var(--flame); }
+  .acd-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 13px;
+    border-top: 2px solid rgba(33,56,69,.12); }
+  .acd-tag { font-family: var(--font-accent); font-size: 15px; color: var(--moss); }
+  .acd-btn { font-family: var(--font-label); font-weight: 800; font-size: 11px; letter-spacing: .1em; color: var(--flame);
+    border: 2px solid var(--ink); border-radius: 8px; padding: 8px 14px; background: var(--paper); }
+
+  /* ====== ANGLERS — OPTION B: COMPACT ROW ====== */
+  .arows { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; overflow: hidden; }
+  .arow2 { display: grid; grid-template-columns: 30px 46px 1fr auto; gap: 11px; padding: 13px 14px; align-items: center; }
+  .arow2 + .arow2 { border-top: 2px solid rgba(33,56,69,.12); }
+  .arow2-rank { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--ink); line-height: 1; }
+  .arow2-id { min-width: 0; }
+  .arow2-name { font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--ink); line-height: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .arow2-meta { display: flex; gap: 7px; align-items: center; margin-top: 5px; }
+  .arow2-loc { font-size: 12px; color: var(--flame); }
+  .arow2-tag { font-family: var(--font-accent); font-size: 12px; color: var(--moss); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; }
+  .arow2-stat { text-align: right; }
+  .arow2-stat b { font-family: var(--font-display); font-weight: 800; font-size: 19px; color: var(--deep-blue); line-height: 1; display: block; }
+  .arow2-stat span { font-family: var(--font-label); font-weight: 800; font-size: 8px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink); }
+
+  /* annotation note */
+  .note-h { font-family: var(--font-display); font-weight: 800; font-size: 17px; color: var(--ink); margin: 0 0 8px; }
+  .note-p { font-family: var(--font-body); font-size: 13px; line-height: 1.5; color: var(--near-black); margin: 0 0 10px; }
+  .note-p:last-child { margin-bottom: 0; }
+  .note-tag { display: inline-block; font-family: var(--font-label); font-weight: 800; font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; padding: 4px 9px; border-radius: 999px; margin-bottom: 10px; }
+  .note-tag.rec { background: var(--moss); color: var(--paper); }
+  .note-tag.alt { background: var(--sand); color: var(--ink); }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<rect width="100" height="100" fill="#213845"/>
+<rect x="38" y="20" width="24" height="46" rx="4" fill="none" stroke="#83BAD4" stroke-width="3"/>
+<line x1="44" y1="28" x2="56" y2="28" stroke="#83BAD4" stroke-width="2.5"/>
+<line x1="44" y1="34" x2="56" y2="34" stroke="#E46B3B" stroke-width="2.5"/>
+<text x="50" y="84" font-family="Georgia, serif" font-size="11" fill="#FFF9EF" text-anchor="middle">Mobile</text>
+</svg>
+</template>
+<div id="root"></div>
+
+<script type="text/babel" src="../ui_kits/web/data.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const { useEffect } = React;
+
+/* ---------- helpers ---------- */
+function Disc({ a, size = 46, inner = 32, fs = 13 }) {
+  return (
+    <div className="disc-wrap" style={{ width: size, height: size, background: a.accent }}>
+      <div className="disc" style={{ width: inner, height: inner, background: a.disc, color: a.discText, fontSize: fs }}>{a.initials}</div>
+    </div>
+  );
+}
+function Icon({ name, style }) {
+  const ref = React.useRef(null);
+  useEffect(() => { if (ref.current) { ref.current.innerHTML = ""; const el = document.createElement("i");
+    el.setAttribute("data-lucide", name); ref.current.appendChild(el); window.lucide && window.lucide.createIcons({ attrs: {}, nameAttr: "data-lucide", icons: window.lucide.icons }); } });
+  return <span className="ic" ref={ref} style={style}></span>;
+}
+function Status({ dark }) {
+  return (
+    <div className="ms-status" style={{ color: dark ? "var(--paper)" : "var(--ink)" }}>
+      <span>9:41</span>
+      <span className="dots"><Icon name="signal" /><Icon name="wifi" /><Icon name="battery-full" /></span>
+    </div>
+  );
+}
+
+const board = (window.LIVE_BOARD || []).slice(0, 5);
+const anglers = (window.ANGLERS || []).slice(0, 4);
+
+/* ============ NAV: COLLAPSED HEADER ============ */
+function NavCollapsed() {
+  return (
+    <div className="ms">
+      <Status />
+      <div className="mhdr">
+        <img className="mhdr-logo" src="../assets/logo-ink.png" alt="Castline" />
+        <div className="mhdr-right">
+          <span className="cl-badge-live mhdr-live">Live</span>
+          <button className="mhdr-burger"><Icon name="menu" /></button>
+        </div>
+      </div>
+      <div className="mhero">
+        <div className="mhero-eye">Every Angler · Every Cast</div>
+        <h1 className="mhero-title">Cast On.</h1>
+        <p className="mhero-lede">The home of competitive bass fishing — live boards, every boat, every story.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ============ NAV: DRAWER OPEN ============ */
+function NavDrawer() {
+  const links = [
+    { label: "Home", icon: "house", active: false },
+    { label: "Anglers", icon: "users", active: false },
+    { label: "Live", icon: "radio", active: true },
+    { label: "Profile", icon: "circle-user", active: false },
+  ];
+  return (
+    <div className="ms">
+      <Status />
+      <div className="mhdr">
+        <img className="mhdr-logo" src="../assets/logo-ink.png" alt="Castline" />
+        <div className="mhdr-right">
+          <span className="cl-badge-live mhdr-live">Live</span>
+          <button className="mhdr-burger is-open"><Icon name="x" /></button>
+        </div>
+      </div>
+      <div className="mdrawer">
+        <div className="mdrawer-bar">
+          <img className="mdrawer-logo" src="../assets/logo-blue.png" alt="Castline" />
+          <button className="mdrawer-close"><Icon name="x" /></button>
+        </div>
+        <div className="mdrawer-links">
+          {links.map((l) => (
+            <a key={l.label} className={"mdrawer-link" + (l.active ? " is-active" : "")}>
+              <Icon name={l.icon} />{l.label}
+              {l.active && <span className="cl-badge-live mhdr-live" style={{ marginLeft: "auto" }}>On Air</span>}
+            </a>
+          ))}
+        </div>
+        <div className="mdrawer-foot">
+          <div className="mdrawer-search"><Icon name="search" />Search anglers, events…</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ LEADERBOARD — OPTION A: STACKED CARDS ============ */
+function BoardCards() {
+  return (
+    <div className="ms">
+      <Status />
+      <div className="ms-scroll">
+        <div className="ms-shead"><h2 className="ms-stitle">Live Board</h2><span className="ms-slink">Day 2</span></div>
+        {board.map((a, i) => (
+          <div className="lbcard" key={a.id}>
+            <div className="lbcard-top">
+              <div className={"lbcard-rank" + (i === 0 ? " top" : "")}>{i + 1}</div>
+              <Disc a={a} size={48} inner={34} fs={14} />
+              <div style={{ minWidth: 0 }}>
+                <div className="lbcard-name">{a.name}</div>
+                <div className="lbcard-sub">Boat {a.boat} · {a.state}</div>
+              </div>
+            </div>
+            <div className="lbcard-foot">
+              <div className="lbcard-cell"><b>{a.fish}</b><span>Fish</span></div>
+              <div className="lbcard-cell wt"><b>{a.today.toFixed(2)}</b><span>Weight (lb)</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============ LEADERBOARD — OPTION B: COMPACT ROWS ============ */
+function BoardRows() {
+  return (
+    <div className="ms">
+      <Status />
+      <div className="ms-scroll">
+        <div className="ms-shead"><h2 className="ms-stitle">Live Board</h2><span className="ms-slink">Day 2</span></div>
+        <div className="lbrows">
+          <div className="lbrows-head"><span>#</span><span>Angler</span><span>Weight</span></div>
+          {board.map((a, i) => (
+            <div className="lbrow" key={a.id}>
+              <div className={"lbrow-rank" + (i === 0 ? " top" : "")}>{i + 1}</div>
+              <div className="lbrow-ang">
+                <Disc a={a} size={40} inner={28} fs={11} />
+                <div style={{ minWidth: 0 }}>
+                  <div className="lbrow-name">{a.name}</div>
+                  <div className="lbrow-sub">{a.fish} fish · {a.state}</div>
+                </div>
+              </div>
+              <div className="lbrow-wt">{a.today.toFixed(2)}<small>lb</small></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ ANGLERS — OPTION A: STACKED CARDS ============ */
+function AnglerCards() {
+  return (
+    <div className="ms">
+      <Status />
+      <div className="ms-scroll is-cream">
+        <div className="ms-shead"><h2 className="ms-stitle">Anglers</h2><span className="ms-slink">A–Z</span></div>
+        {anglers.map((a) => (
+          <div className="acd" key={a.id}>
+            <div className="acd-top">
+              <Disc a={a} size={64} inner={44} fs={18} />
+              <div className="acd-stat"><b>{a.seasonLb.toFixed(2)}</b><span>Season lb</span></div>
+            </div>
+            <div className="acd-name">{a.first} {a.last}</div>
+            <div className="acd-loc">{a.state}</div>
+            <div className="acd-foot">
+              <span className="acd-tag">{a.tag}</span>
+              <button className="acd-btn">Profile</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============ ANGLERS — OPTION B: COMPACT ROWS ============ */
+function AnglerRows() {
+  return (
+    <div className="ms">
+      <Status />
+      <div className="ms-scroll is-cream">
+        <div className="ms-shead"><h2 className="ms-stitle">Anglers</h2><span className="ms-slink">A–Z</span></div>
+        <div className="arows">
+          {anglers.map((a) => (
+            <div className="arow2" key={a.id}>
+              <div className="arow2-rank">{a.rank}</div>
+              <Disc a={a} size={46} inner={32} fs={13} />
+              <div className="arow2-id">
+                <div className="arow2-name">{a.first} {a.last}</div>
+                <div className="arow2-meta"><span className="arow2-loc">{a.state}</span><span className="arow2-tag">{a.tag}</span></div>
+              </div>
+              <div className="arow2-stat"><b>{a.seasonLb.toFixed(2)}</b><span>lb</span></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- note card ---------- */
+function Note({ children }) {
+  return <div style={{ padding: "22px 24px", height: "100%", background: "var(--paper-warm)", borderRadius: 14, display: "flex", flexDirection: "column", justifyContent: "center" }}>{children}</div>;
+}
+
+function App() {
+  useEffect(() => { window.lucide && window.lucide.createIcons(); });
+  return (
+    <DesignCanvas>
+      <DCSection id="nav" title="Navigation" subtitle="Hamburger pattern — collapsed bar → full drawer">
+        <DCArtboard id="nav-collapsed" label="Header · collapsed" width={390} height={560}><NavCollapsed /></DCArtboard>
+        <DCArtboard id="nav-drawer" label="Drawer · open" width={390} height={560}><NavDrawer /></DCArtboard>
+        <DCArtboard id="nav-note" label="Notes" width={300} height={560}>
+          <Note>
+            <h3 className="note-h">One nav, two states</h3>
+            <p className="note-p">Logo shrinks to 34px, links collapse behind the burger. The <b>LIVE</b> badge stays pinned in the bar — it's the brand hook, too important to bury.</p>
+            <p className="note-p">Drawer is a full ink panel with oversized display-type links + a search field docked at the bottom on the flame rule.</p>
+          </Note>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="board" title="Live leaderboard — pick a reflow" subtitle="The 4-column table can't survive at phone width. Two ways to handle it:">
+        <DCArtboard id="board-a" label="Option A · Stacked cards" width={390} height={760}><BoardCards /></DCArtboard>
+        <DCArtboard id="board-b" label="Option B · Compact rows" width={390} height={760}><BoardRows /></DCArtboard>
+        <DCArtboard id="board-note" label="Trade-off" width={300} height={760}>
+          <Note>
+            <span className="note-tag rec">Recommended · A</span>
+            <h3 className="note-h">Cards vs. rows</h3>
+            <p className="note-p"><b>A — Cards</b> give each angler room: big weight figure, fish count, boat + state all legible. Best when the board is the main event (Live screen).</p>
+            <p className="note-p"><b>B — Rows</b> keep more anglers on screen and read like a true leaderboard. Better for a long full-standings list.</p>
+          </Note>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="anglers" title="Anglers list — pick a reflow" subtitle="The 6-column roster table, reflowed two ways:">
+        <DCArtboard id="ang-a" label="Option A · Stacked cards" width={390} height={620}><AnglerCards /></DCArtboard>
+        <DCArtboard id="ang-b" label="Option B · Compact rows" width={390} height={620}><AnglerRows /></DCArtboard>
+        <DCArtboard id="ang-note" label="Trade-off" width={300} height={620}>
+          <Note>
+            <span className="note-tag alt">Your call</span>
+            <h3 className="note-h">Density vs. presence</h3>
+            <p className="note-p"><b>A — Cards</b> reuse your existing card view, so the list & grid toggle basically merge on mobile. Strong, scannable, photo-ready.</p>
+            <p className="note-p"><b>B — Rows</b> fit ~2× more anglers per screen with the style tag inline. Better for quickly scanning the whole field.</p>
+          </Note>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile preview harness</title>
+<style>
+  body { margin: 0; background: #4b5358; font-family: system-ui, sans-serif; display: flex; gap: 30px; padding: 30px; align-items: flex-start; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .lbl { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+  .phone { width: 390px; height: 1400px; border: none; border-radius: 14px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+  .phone.sm { width: 360px; }
+</style>
+</head>
+<body>
+  <div class="col"><div class="lbl">390px — iPhone (sandbox)</div><iframe class="phone" id="f1" src="kit/index.html"></iframe></div>
+  <div class="col"><div class="lbl">360px — narrow Android (sandbox)</div><iframe class="phone sm" id="f2" src="kit/index.html"></iframe></div>
+</body>
+</html>

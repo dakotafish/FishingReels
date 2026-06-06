@@ -1,0 +1,30 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 26px 28px; background: var(--ink); }
+  .bar { background: var(--flame); border-radius: var(--r-lg); border: 2.5px solid var(--ink);
+    box-shadow: var(--shadow-card-sm); display: flex; align-items: center; gap: 28px;
+    padding: 18px 22px; }
+  .title { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.05;
+    color: var(--paper); flex: 1; }
+  .meta { font-family: var(--font-label); font-weight: 800; font-size: 14px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--paper); }
+  .watch { font-family: var(--font-label); font-weight: 800; font-size: 13px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--flame); background: var(--paper);
+    border: 2px solid var(--ink); border-radius: 8px; padding: 11px 18px; display:flex; gap:8px; align-items:center; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--flame); }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="title">Primetime Bass<br>Fishing Tournament</div>
+    <div class="meta">DAY 2</div>
+    <div class="meta">62 BOATS</div>
+    <div class="watch"><span class="dot"></span>WATCH TOURNAMENT</div>
+  </div>
+</body>
+</html>

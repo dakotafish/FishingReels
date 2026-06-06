@@ -1,0 +1,41 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 26px 32px; background: var(--sky); display:flex; gap: 22px; }
+  .card { width: 320px; background: var(--paper); border: 2.5px solid var(--ink);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 18px; }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .avatar { width: 92px; height: 92px; border-radius: 12px; background: var(--flame);
+    display: flex; align-items: center; justify-content: center; }
+  .disc { width: 64px; height: 64px; border-radius: 50%; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--moss); }
+  .stat { text-align: right; font-family: var(--font-display); font-weight: 800; font-size: 28px; color: var(--deep-blue); line-height: 1; }
+  .stat small { display:block; font-family: var(--font-label); font-weight:800; font-size: 9px; letter-spacing: .12em; color: var(--ink); margin-top: 3px; }
+  .name { font-family: var(--font-display); font-weight: 800; font-size: 27px; color: var(--ink); margin: 14px 0 2px; }
+  .loc { font-family: var(--font-body); font-size: 15px; color: var(--flame); }
+  .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  .tags { font-family: var(--font-accent); font-style: normal; font-size: 19px; color: var(--moss); }
+  .profile { font-family: var(--font-label); font-weight: 800; font-size: 12px; letter-spacing: .1em;
+    color: var(--flame); border: 2px solid var(--ink); border-radius: 8px; padding: 7px 14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="top">
+      <div class="avatar"><div class="disc">AC</div></div>
+      <div class="stat">52.10<small>LB · SEASON</small></div>
+    </div>
+    <div class="name">Austin Cranford</div>
+    <div class="loc">Oklahoma</div>
+    <div class="foot">
+      <span class="tags">Jerkbait &amp; Flippin</span>
+      <span class="profile">PROFILE</span>
+    </div>
+  </div>
+</body>
+</html>

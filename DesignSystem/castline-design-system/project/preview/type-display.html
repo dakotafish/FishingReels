@@ -1,0 +1,23 @@
+<!-- @dsCard group="Type" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--font-display); padding: 28px 32px; }
+  .row { display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid rgba(33,56,69,.12); padding: 10px 0; }
+  .row:last-child { border-bottom: none; }
+  .tag { font-family: var(--font-label); font-weight:800; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--deep-blue); width: 130px; flex: none; }
+  .spec { font-weight: 800; line-height: .96; letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+  <div class="row"><span class="tag">Hero · 800</span><span class="spec" style="font-size:58px; color:var(--sky)">Every Cast.</span></div>
+  <div class="row"><span class="tag">H1 · 800</span><span class="spec" style="font-size:42px">See every cast</span></div>
+  <div class="row"><span class="tag">H2 · 700</span><span class="spec" style="font-size:30px">Featured Anglers</span></div>
+  <div class="row"><span class="tag">H3 · 700</span><span class="spec" style="font-size:22px">Primetime Bass Tournament</span></div>
+</body>
+</html>

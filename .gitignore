@@ -37,3 +37,6 @@ dist/
 # --- OS ---
 .DS_Store
 Thumbs.db
+
+# --- Design System ---
+DesignSystem/castline-design-system/chats/
