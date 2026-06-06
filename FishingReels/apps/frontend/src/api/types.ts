@@ -38,10 +38,131 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/anglers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Anglers */
+        get: operations["list_anglers_api_anglers_get"];
+        put?: never;
+        /** Create Angler */
+        post: operations["create_angler_api_anglers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/anglers/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Angler */
+        get: operations["get_angler_api_anglers__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Angler */
+        patch: operations["update_angler_api_anglers__slug__patch"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
+    schemas: {
+        /** AnglerCreate */
+        AnglerCreate: {
+            /** Bio */
+            bio?: string | null;
+            /** Avatar Url */
+            avatar_url?: string | null;
+            /** Home State */
+            home_state?: string | null;
+            /** Home Town */
+            home_town?: string | null;
+            /** Display Name */
+            display_name: string;
+        };
+        /** AnglerRead */
+        AnglerRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /** Slug */
+            slug: string;
+            /** Bio */
+            bio: string | null;
+            /** Avatar Url */
+            avatar_url: string | null;
+            status: components["schemas"]["AnglerStatus"];
+            /** Home State */
+            home_state: string | null;
+            /** Home Town */
+            home_town: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * AnglerStatus
+         * @description Lifecycle / visibility state of an Angler profile.
+         *
+         *     Stored as a native Postgres enum type ``angler_status``.
+         * @enum {string}
+         */
+        AnglerStatus: "active" | "hidden" | "archived";
+        /** AnglerUpdate */
+        AnglerUpdate: {
+            /** Bio */
+            bio?: string | null;
+            /** Avatar Url */
+            avatar_url?: string | null;
+            /** Home State */
+            home_state?: string | null;
+            /** Home Town */
+            home_town?: string | null;
+            /** Display Name */
+            display_name?: string | null;
+            status?: components["schemas"]["AnglerStatus"] | null;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
+    };
     responses: never;
     parameters: never;
     requestBodies: never;
@@ -90,6 +211,125 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    list_anglers_api_anglers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnglerRead"][];
+                };
+            };
+        };
+    };
+    create_angler_api_anglers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnglerCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnglerRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_angler_api_anglers__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnglerRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_angler_api_anglers__slug__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnglerUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnglerRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

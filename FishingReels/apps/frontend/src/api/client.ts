@@ -1,4 +1,4 @@
-import type { paths } from '@/api/types'
+import type { components, paths } from '@/api/types'
 
 const API_BASE = '/api'
 
@@ -12,3 +12,5 @@ export async function fetchApi<T>(path: string): Promise<T> {
 
 export type HealthResponse =
   paths['/api/health']['get']['responses']['200']['content']['application/json']
+
+export type Angler = components['schemas']['AnglerRead']
