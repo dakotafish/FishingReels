@@ -17,8 +17,46 @@ erDiagram
         varchar home_town "100, nullable"
     }
 
+    Stream {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        stream_status status "default live"
+        timestamptz started_at
+        timestamptz ended_at "nullable"
+        varchar playlist_path "255, relative to HLS root"
+    }
+
+    AnglerStream {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        uuid angler_id FK
+        uuid stream_id FK "unique with angler_id"
+    }
+
+    StreamKey {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        varchar key UK "64, unique, the MediaMTX publish path"
+        stream_key_type key_type "default angler"
+        stream_key_status status "default active"
+    }
+
+    AnglerStreamKey {
+        uuid id PK
+        timestamptz created_at
+        timestamptz updated_at
+        uuid angler_id FK
+        uuid stream_key_id FK "unique, one angler per key"
+    }
+
     Angler ||--o{ AnglerStream : has
     AnglerStream }o--|| Stream : has
+
+    Angler ||--o{ AnglerStreamKey : has
+    AnglerStreamKey |o--|| StreamKey : is
     
     Angler ||--o{ AnglerHighlight : has
     AnglerHighlight ||--|| Highlight : is
@@ -74,6 +112,9 @@ erDiagram
 - **Primary keys:** every table uses a UUID primary key.
 - **Enum columns (not lookup tables):** the following are modeled as enum columns on their parent entity rather than separate tables, so they don't appear as entities above:
   - `Angler.status` — `active` | `hidden` | `archived` (native PG enum `angler_status`)
+  - `Stream.status` — `live` | `ended` (native PG enum `stream_status`)
+  - `StreamKey.key_type` — `angler` | `tourney` (native PG enum `stream_key_type`)
+  - `StreamKey.status` — `active` | `revoked` (native PG enum `stream_key_status`)
   - `User.user_type` — `angler` | `tourney` | `admin`
   - `SponsorAsset.asset_type`
   - `TourneyParticipantCatch.catch_type`

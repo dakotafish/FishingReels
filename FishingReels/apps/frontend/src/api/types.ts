@@ -74,6 +74,78 @@ export interface paths {
         patch: operations["update_angler_api_anglers__slug__patch"];
         trace?: never;
     };
+    "/api/anglers/{slug}/stream-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Stream Keys */
+        get: operations["list_stream_keys_api_anglers__slug__stream_keys_get"];
+        put?: never;
+        /**
+         * Create Stream Key
+         * @description Mint a key. The only response that ever contains the full secret.
+         */
+        post: operations["create_stream_key_api_anglers__slug__stream_keys_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/anglers/{slug}/stream-keys/{key_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke Stream Key */
+        delete: operations["revoke_stream_key_api_anglers__slug__stream_keys__key_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/streams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Streams */
+        get: operations["list_streams_api_streams_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/streams/{stream_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Stream */
+        get: operations["get_stream_api_streams__stream_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -130,6 +202,23 @@ export interface components {
          * @enum {string}
          */
         AnglerStatus: "active" | "hidden" | "archived";
+        /**
+         * AnglerSummary
+         * @description Just enough Angler for stream listings and the watch page.
+         */
+        AnglerSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /** Slug */
+            slug: string;
+            /** Avatar Url */
+            avatar_url: string | null;
+        };
         /** AnglerUpdate */
         AnglerUpdate: {
             /** Bio */
@@ -149,6 +238,112 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * StreamKeyListItem
+         * @description Key metadata for listings — never carries the secret. A lost key is
+         *     replaced by minting a new one and revoking the old.
+         */
+        StreamKeyListItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Key Hint */
+            key_hint: string;
+            key_type: components["schemas"]["StreamKeyType"];
+            status: components["schemas"]["StreamKeyStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * StreamKeyRead
+         * @description Full key included — returned ONLY by the mint endpoint, once.
+         */
+        StreamKeyRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Key */
+            key: string;
+            key_type: components["schemas"]["StreamKeyType"];
+            status: components["schemas"]["StreamKeyStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * StreamKeyStatus
+         * @description Whether a publish key is accepted at the ingest door.
+         *
+         *     Stored as a native Postgres enum type ``stream_key_status``.
+         * @enum {string}
+         */
+        StreamKeyStatus: "active" | "revoked";
+        /**
+         * StreamKeyType
+         * @description What kind of owner a publish key belongs to.
+         *
+         *     Tells consumers which per-type link table to look in (AnglerStreamKey
+         *     today; a tourney link table later). Stored as a native Postgres enum
+         *     type ``stream_key_type``.
+         * @enum {string}
+         */
+        StreamKeyType: "angler" | "tourney";
+        /** StreamRead */
+        StreamRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            status: components["schemas"]["StreamStatus"];
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /** Playlist Url */
+            playlist_url: string;
+            angler: components["schemas"]["AnglerSummary"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * StreamStatus
+         * @description Lifecycle of a single live-stream session.
+         *
+         *     Stored as a native Postgres enum type ``stream_status``.
+         * @enum {string}
+         */
+        StreamStatus: "live" | "ended";
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -321,6 +516,160 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AnglerRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_stream_keys_api_anglers__slug__stream_keys_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StreamKeyListItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_stream_key_api_anglers__slug__stream_keys_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StreamKeyRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_stream_key_api_anglers__slug__stream_keys__key_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_streams_api_streams_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["StreamStatus"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StreamRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_stream_api_streams__stream_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                stream_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StreamRead"];
                 };
             };
             /** @description Validation Error */
