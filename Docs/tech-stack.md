@@ -53,6 +53,8 @@ The user-facing app. Built via Vite 8 + create-vite (modern flat ESLint + split 
 ### Tailwind CSS v4 — styling
 Utility-first CSS via the `@tailwindcss/vite` plugin. CSS-first configuration — no `tailwind.config.ts` file; theme tokens live in `src/index.css` under an `@theme inline` block.
 
+`index.css` carries the **Castline design system**: the 8 brand swatches + support palette as namespaced `--cl-*` tokens (oklch, with the source hex in a comment), the shadcn semantic vars (`--primary`, `--accent`, etc.) mapped onto them, signature **hard offset-shadow** utilities (`shadow-card` / `shadow-card-sm` / `shadow-press` — 0-blur, unlike Tailwind's soft defaults), literal brand radii, and the `cl-pulse` live-badge animation. There is **no dark mode** (the brand is a single cream page with ink/carbon *bands*, so shadcn's `.dark` block and `dark` variant were removed). Full token map and rationale: [`../DesignSystem/DesignSystemMap.md`](../DesignSystem/DesignSystemMap.md).
+
 ### shadcn/ui — component library
 **Choice:** shadcn/ui on Radix primitives, initialized with a neutral base palette via `npx shadcn@latest init` (shadcn 4.8.0).
 **Why:** Copy-paste components we own rather than a black-box library; pairs naturally with Tailwind.
@@ -63,8 +65,20 @@ TypeScript types for the API surface are generated from FastAPI's `/openapi.json
 **Alternative considered:** Hand-maintained shared types package — more moving parts, drift risk.
 **Note:** Currently installed with `--legacy-peer-deps` in `Dockerfile.dev` because `openapi-typescript@7.x` ships a `peerDep: typescript@^5.x` while the project uses TS 6. The tool works correctly with TS 6 at runtime; the peer-dep constraint is overly conservative. Revisit if a future change makes a more targeted fix (e.g., `overrides` in `package.json`) feasible.
 
-### react-router — routing *(planned — will be added when the app gains a second route)*
-The home page currently lives directly in `src/App.tsx`; once a second route exists, routes move to `apps/frontend/src/routes/` and `react-router` mounts in `App.tsx`. Other state-management / data-fetching choices like TanStack Query are not yet decided.
+### react-router — routing
+**Choice:** `react-router` v7. `App.tsx` mounts `<BrowserRouter>` around `<AppRoutes>` (`src/app-routes.tsx`); the route tree is kept separate from the router so tests can mount it in a `MemoryRouter`. Pages live in `src/pages/` and share a `SiteLayout` (Header + `<Outlet>` + Footer). Routes: `/` (home), `/anglers` (roster), `/anglers/:slug` (profile placeholder, deferred).
+Data fetching is currently a small hand-rolled hook (`src/hooks/use-anglers.ts`) over the generated types; a dedicated data-fetching layer (e.g. TanStack Query) is not yet decided.
+
+### Fonts — @fontsource
+**Choice:** the three Castline brand faces are self-hosted via Fontsource npm packages — `@fontsource-variable/rethink-sans` (display), `@fontsource-variable/epilogue` (body + ALL-CAPS labels), `@fontsource/bbh-hegarty` (brushy accent, static 400). Imported at the top of `src/index.css`.
+**Why:** all three are open (OFL) and on Fontsource, so one consistent mechanism, no licensing blocker, no manual `@font-face`/TTF management. Replaced the starter's Geist.
+
+### lucide-react — icons
+**Choice:** `lucide-react` behind a thin `Icon` wrapper (`src/components/ui/icon.tsx`) that bakes in the brand conventions (~2px stroke, `currentColor`, `live` → flame). The wrapper takes the glyph component as a prop so the source can be swapped to a bespoke icon set later without touching call-site ergonomics.
+
+### Vitest + React Testing Library — frontend tests
+**Choice:** Vitest (jsdom) + `@testing-library/react` + `@testing-library/jest-dom`, configured in `vite.config.ts` (`test` block) with `src/test/setup.ts`. Tests are colocated as `*.test.ts(x)`; run via `make test-frontend` or `npm run test`.
+**Why:** Vite-native test runner (shares the same transform/config), no separate Jest/Babel toolchain.
 
 ---
 

@@ -173,31 +173,38 @@ apps/backend/
 apps/frontend/
 ├── Dockerfile.dev              # `npm run dev` for compose
 ├── package.json
-├── tsconfig.json
-├── vite.config.ts              # dev proxy: /api → backend, /streams → mediamtx
-├── tailwind.config.ts
-├── postcss.config.js
+├── tsconfig*.json              # split app / node configs
+├── vite.config.ts              # dev proxy: /api → backend, /streams → mediamtx; Vitest `test` block
+├── eslint.config.js
 ├── components.json             # shadcn config
 ├── index.html
 ├── public/
 └── src/
     ├── main.tsx
-    ├── App.tsx
-    ├── routes/                 # react-router pages
+    ├── App.tsx                 # mounts <BrowserRouter>
+    ├── app-routes.tsx          # route tree (kept apart from the router so tests can use MemoryRouter)
+    ├── index.css               # Tailwind v4 + Castline design tokens (the @theme / :root blocks)
+    ├── pages/                  # one component per route (home, anglers, angler-profile)
     ├── components/
-    │   ├── ui/                 # shadcn-installed primitives
-    │   └── ...                 # app components (StreamCard, AnglerProfile, ...)
+    │   ├── ui/                 # shadcn-style primitives (button, card, badge-live, icon, chip)
+    │   ├── layout/             # chrome (header + drawer, footer, stripe, container, site-layout)
+    │   ├── sections/           # home bands (hero, tournament-bar, section-band, feature-split)
+    │   └── angler/             # roster (avatar, card, row, view-toggle)
+    ├── hooks/                  # data hooks (use-anglers)
     ├── lib/
-    │   └── utils.ts            # cn() helper + small utilities
+    │   ├── utils.ts            # cn() helper
+    │   ├── avatar.ts           # deterministic avatar trio + initials
+    │   └── angler.ts           # small angler helpers
     ├── api/
-    │   ├── client.ts           # fetch wrapper
+    │   ├── client.ts           # fetch wrapper + exported API types
     │   └── types.ts            # AUTO-GENERATED from /openapi.json (do not edit)
-    ├── hooks/
-    └── styles/
-        └── globals.css         # Tailwind directives + CSS vars
+    ├── assets/brand/           # logo, racing stripe, dot texture, emblem, feature photo
+    └── test/                   # Vitest setup + shared fixtures
 ```
 
-**OpenAPI sync:** `package.json` gets a script `"gen:api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/types.ts"`. Run after backend schema changes. Wiring it into a pre-commit hook or watch script is a later refinement.
+Tests are **colocated** with the code they cover (`*.test.ts(x)`), run via `make test-frontend`.
+
+**OpenAPI sync:** `package.json` has a `"gen:api"` script (run via `make gen-api`, which `docker compose exec`s the frontend container against the backend's `/openapi.json`); it rewrites `src/api/types.ts`. Run after backend schema changes. Wiring it into a pre-commit hook or watch script is a later refinement.
 
 ---
 

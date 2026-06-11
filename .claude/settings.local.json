@@ -17,7 +17,8 @@
       "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./components.json'\\), null, 2\\)\\)\")",
       "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\), null, 2\\)\\)\")",
       "Bash(npx tailwindcss *)",
-      "Bash(git -C /Users/dakotafischer/dev/FishingReelsProject/FishingReels status --short)"
+      "Bash(git -C /Users/dakotafischer/dev/FishingReelsProject/FishingReels status --short)",
+      "Bash(npx vitest *)"
     ]
   }
 }

@@ -203,6 +203,12 @@ These are page-section patterns rather than discrete components — recreate the
 > that reality and flag conflicts with shadcn's CSS-variable conventions. (Confirmed: no `tailwind.config.*`
 > exists; `components.json` drives shadcn.)
 
+> **✅ Implemented** in `FishingReels/apps/frontend/src/index.css` per the §5 decisions: `--cl-*` brand
+> tokens (oklch + hex comments), shadcn semantic vars remapped onto them, `shadow-card*` hard-shadow
+> utilities, literal radii, the three Fontsource fonts, the `cl-pulse` animation, and the `.wrap` / `.edge`
+> layout helpers. The `.dark` block and `dark` variant were removed. The notes below remain as the rationale
+> record; see the **Implementation status** section at the end for the file map.
+
 **Current state of `index.css`:** stock shadcn neutral theme — `--background`/`--foreground`/`--primary`/
 `--card`/`--accent`/`--destructive`/`--border`/`--ring`/`--radius` etc. in **oklch grayscale**, font is
 **Geist Variable**, with a `.dark` block and a `--radius: 0.625rem` calc-based radius scale. None of it is
@@ -273,13 +279,16 @@ the main player *and* the multi-cam tiles.
 **Typography pairing:** Rethink Sans (display: headlines, names, stats) + Epilogue (everything else:
 nav/labels caps & body) + BBH Hegarty **upright**, used sparingly for discipline tags / personality.
 
-**Iconography:** Lucide via CDN (flagged substitution — no brand icon set shipped). Even ~2px stroke to
-match the 2.5px borders. Ink on light, cream on dark, **flame only for live/active**. Stroke style only
-(no fills except the live dot). **No emoji, no unicode-as-icon.** The fish emblem is the only mascot.
+**Iconography:** Lucide via the **`lucide-react`** package (behind the `Icon` wrapper; the glyph source is
+swappable if a bespoke set ever ships). Even ~2px stroke to match the 2.5px borders. Ink on light, cream on
+dark, **flame only for live/active**. Stroke style only (no fills except the live dot). **No emoji, no
+unicode-as-icon.** The fish emblem is the only mascot.
 
 **Avatar color rule:** every angler gets a unique trio from the palette — `accent` (outer square),
 `disc` (inner circle, always a *light* hue), `discText` (initials, always a *saturated* hue). Never
-cream/buff or black initials (prevents the invisible-on-dark bug that was fixed in the prototype).
+cream/buff or black initials (prevents the invisible-on-dark bug that was fixed in the prototype). In the
+build these are **derived deterministically** from the angler id (`src/lib/avatar.ts`) — disc and initials
+are drawn from disjoint light/saturated pools, so the rule holds for every angler without storing colors.
 
 **Responsive intent (from the mobile pass):** desktop-first, then layered breakpoints — **≤980px** (grids →
 1 col, emblem hidden), **≤820px** (nav → hamburger drawer), **≤640px** (gutters→18px, tables → Option B
@@ -305,6 +314,24 @@ These were the build-time open questions; each is now a settled decision (walked
 10. **`--edge-gutter` vs `.wrap` → keep both as named helpers.** Both horizontal systems are intentional and kept: an **edge-gutter wrapper (57px)** for header/footer/live bar, and a **`.wrap` container (1240px / 72px)** for content sections — codified as explicit, named layout helpers so the chrome-wider-than-content alignment stays deliberate.
 
 ---
+
+## 6. Implementation status
+
+Built in `FishingReels/apps/frontend/` (all with colocated Vitest tests). Scope = **Homepage + Anglers list** (Q8a); Angler **Profile** stats and the **Live tournament** screen are deferred until tournament/leaderboard tables exist.
+
+**Tokens & theme:** `src/index.css` (see §3 banner).
+
+**Primitives** (`src/components/ui/`): `button.tsx` (variants `default`=ink / `cta`=flame / `ghost` / `outline` / `destructive`), `card.tsx` (ink border + hard shadow), `badge-live.tsx`, `icon.tsx`, `chip.tsx`.
+
+**Layout chrome** (`src/components/layout/`): `container.tsx` (`Wrap` + `EdgeGutter`), `stripe.tsx`, `header.tsx` (+ mobile drawer), `footer.tsx`, `site-layout.tsx`.
+
+**Home sections** (`src/components/sections/`): `hero.tsx`, `tournament-bar.tsx`, `section-band.tsx` (+ `SectionLink`), `feature-split.tsx`.
+
+**Anglers** (`src/components/angler/`): `angler-avatar.tsx` (photo or derived fallback), `angler-card.tsx`, `angler-row.tsx`, `view-toggle.tsx`. Data via `src/hooks/use-anglers.ts` → `GET /api/anglers`; helpers in `src/lib/avatar.ts` + `src/lib/angler.ts`.
+
+**Routing & pages:** `src/app-routes.tsx`, `src/pages/{home,anglers,angler-profile}.tsx`; `App.tsx` mounts `<BrowserRouter>`.
+
+**Deferred / not built:** season-weight stat, rank, and discipline tag on cards/rows (no backend field — Q8b); the Angler Profile body; the Live tournament screen, multi-cam scroller, leaderboard, and video player (§2 documents these from the prototype for when their data lands).
 
 ### Source files referenced
 - `castline-design-system/project/README.md` — brand context, content/visual foundations, iconography, index.

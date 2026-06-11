@@ -1,4 +1,4 @@
-.PHONY: up down logs ps shell-backend shell-db migrate test rebuild clean gen-api prod-up prod-down prod-logs prod-rebuild
+.PHONY: up down logs ps shell-backend shell-db migrate test test-frontend rebuild clean gen-api prod-up prod-down prod-logs prod-rebuild
 
 up:
 	docker compose up -d --build
@@ -23,6 +23,9 @@ migrate:
 
 test:
 	docker compose exec backend pytest
+
+test-frontend:
+	docker compose exec frontend npm run test
 
 rebuild:
 	docker compose build --no-cache

@@ -5,7 +5,7 @@ Media-first competitive fishing platform.
 ## Stack
 
 - **Backend:** FastAPI + SQLAlchemy 2 (async), Postgres 16
-- **Frontend:** React + Vite + TypeScript + Tailwind v4 + shadcn/ui
+- **Frontend:** React + Vite + TypeScript + Tailwind v4 + shadcn/ui + react-router (Vitest for tests). Castline design system — see [`../DesignSystem/DesignSystemMap.md`](../DesignSystem/DesignSystemMap.md).
 - **Streaming:** MediaMTX ingest (SRT), Nginx HLS delivery (prod)
 - **Orchestration:** Docker Compose (base + override pattern, separate prod file)
 
@@ -58,6 +58,7 @@ Stop with `make prod-down`.
 | `make shell-db`    | Open `psql` against the dev database          |
 | `make migrate`     | Run `alembic upgrade head`                    |
 | `make test`        | Run backend pytest inside the container       |
+| `make test-frontend` | Run frontend Vitest suite inside the container |
 | `make gen-api`     | Regenerate `apps/frontend/src/api/types.ts` from the backend OpenAPI schema (stack must be up) |
 | `make rebuild`     | Rebuild all dev images from scratch (no cache) |
 | `make clean`       | Tear down AND remove named volumes (e.g., after Python or Node dep changes that left the `backend_venv` / `frontend_node_modules` named volume stale) |

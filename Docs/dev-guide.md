@@ -70,10 +70,11 @@ Components land in `src/components/ui/`. Browse the catalog: https://ui.shadcn.c
 ## Running tests
 
 ```bash
-make test    # backend pytest in container, against the dockerized Postgres
+make test            # backend pytest in container, against the dockerized Postgres
+make test-frontend   # frontend Vitest suite in the frontend container
 ```
 
-Frontend test framework not yet set up.
+Frontend tests use **Vitest + React Testing Library** (jsdom). Run directly on the host with `cd apps/frontend && npm run test` (or `npm run test:watch` while developing). Tests live next to the code they cover as `*.test.ts(x)`.
 
 ## Debugging
 
