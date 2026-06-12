@@ -26,7 +26,6 @@ services:
   mediamtx:
     ports:
       - "8890:8890/udp"   # SRT ingest
-      - "8888:8888"       # HLS serve (dev: hit directly or via Vite proxy)
       - "9997:9997"       # API / stats (dev only)
 
 volumes:

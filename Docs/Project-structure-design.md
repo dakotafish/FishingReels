@@ -72,7 +72,11 @@ infra/
 │       └── fishingreels.conf   # routes: /, /api/*, /streams/*
 │
 ├── mediamtx/
-│   └── mediamtx.yml            # ingest paths, HLS output dir, auth
+│   ├── Dockerfile              # pinned bluenviron/mediamtx -ffmpeg + curl/jq + hook scripts
+│   ├── mediamtx.yml            # SRT ingest, http publish auth, runOnReady/NotReady hooks
+│   └── scripts/
+│       ├── on-ready.sh         # register stream w/ backend, exec ffmpeg HLS packager
+│       └── on-not-ready.sh     # finalize event playlist, mark stream ended
 │
 └── postgres/
     └── init/
@@ -110,17 +114,22 @@ nginx:
 
 ### MediaMTX and Postgres
 
-Both use official images with bind-mounted config:
+Postgres uses the official image with bind-mounted config. MediaMTX builds a thin custom image (pinned `-ffmpeg` variant + `curl`/`jq` + the hook scripts) because the runOnReady hook spawns the ffmpeg HLS packager *inside* the MediaMTX container:
 
 ```yaml
 mediamtx:
-  image: bluenviron/mediamtx:latest
+  build:
+    context: ./infra/mediamtx             # Dockerfile: pinned -ffmpeg image + hook scripts
+  environment:
+    MTX_AUTHHTTPADDRESS: http://backend:8000/api/internal/mediamtx/auth?secret=${MEDIAMTX_WEBHOOK_SECRET}
+    BACKEND_BASE_URL: http://backend:8000  # used by the hook scripts
+    WEBHOOK_SECRET: ${MEDIAMTX_WEBHOOK_SECRET}
+  depends_on:
+    - backend
   volumes:
     - ./infra/mediamtx/mediamtx.yml:/mediamtx.yml:ro
-    - ./data/hls:/recordings           # MediaMTX writes HLS here
-  ports:
-    - "8554:8554"                       # SRT/RTSP ingest
-    - "8888:8888"                       # HLS (dev only; prod via nginx)
+    - ./data/hls:/recordings               # the ffmpeg packager writes HLS here
+  # dev override publishes 8890/udp (SRT) + 9997 (stats); prod only 8890/udp
 
 postgres:
   image: postgres:16-alpine
@@ -130,7 +139,7 @@ postgres:
   env_file: .env
 ```
 
-**HLS sharing:** MediaMTX writes to `./data/hls/` on the host. Nginx reads from the same path (mounted into the nginx container at `/var/streams`). One source of truth on disk, two readers, no copying.
+**HLS sharing:** the packager writes event-style HLS to `./data/hls/<stream id>/` on the host. Nginx reads from the same path (mounted into the nginx container at `/var/streams`). One source of truth on disk, separate readers, no copying.
 
 ---
 
@@ -222,7 +231,7 @@ Browser
 
 - Backend container bind-mounts `apps/backend/` for `uvicorn --reload`.
 - Frontend container bind-mounts `apps/frontend/` for Vite HMR.
-- MediaMTX writes HLS to `./data/hls/`; serves them on `:8888` in dev. In prod, nginx serves them.
+- The ffmpeg packager (spawned by MediaMTX's runOnReady hook) writes event-style HLS to `./data/hls/<stream id>/`. In prod, nginx serves it at `/streams/*`.
 
 Prod compose (`docker-compose.yml` + `docker-compose.prod.yml`) puts nginx in front of everything: it serves the baked-in React build at `/`, proxies `/api/*` to FastAPI, and serves HLS segments from `/streams/*` directly off disk.
 

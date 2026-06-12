@@ -16,15 +16,23 @@ async def _mint_key(api_client, name: str) -> tuple[str, str]:
     return slug, resp.json()["key"]
 
 
-async def test_list_streams_empty(api_client):
+# NOTE: tests run against the shared dev database inside a rollback savepoint,
+# so rows committed outside the test (e.g. real publishes) may exist. Assert on
+# membership/containment, never on exact list contents — same convention as
+# test_angler_api.test_list.
+
+
+async def test_list_streams_ok(api_client):
     resp = await api_client.get("/api/streams")
     assert resp.status_code == 200
-    assert resp.json() == []
+    assert isinstance(resp.json(), list)
 
 
 async def test_list_streams_filters_by_status(api_client):
     _, ended_key = await _mint_key(api_client, "Ended Angler")
-    await api_client.post(READY, json={"path": ended_key}, headers=SECRET)
+    ended_id = (
+        await api_client.post(READY, json={"path": ended_key}, headers=SECRET)
+    ).json()["stream_id"]
     await api_client.post(NOT_READY, json={"path": ended_key}, headers=SECRET)
 
     _, live_key = await _mint_key(api_client, "Live Angler")
@@ -34,20 +42,25 @@ async def test_list_streams_filters_by_status(api_client):
 
     resp = await api_client.get("/api/streams", params={"status": "live"})
     assert resp.status_code == 200
-    body = resp.json()
-    assert [s["id"] for s in body] == [live_id]
+    live_ids = [s["id"] for s in resp.json()]
+    assert live_id in live_ids and ended_id not in live_ids
+    assert all(s["status"] == "live" for s in resp.json())
 
     resp = await api_client.get("/api/streams", params={"status": "ended"})
+    ended_ids = [s["id"] for s in resp.json()]
+    assert ended_id in ended_ids and live_id not in ended_ids
     assert all(s["status"] == "ended" for s in resp.json())
-    assert len(resp.json()) == 1
 
 
 async def test_list_streams_includes_angler_summary(api_client):
     slug, key = await _mint_key(api_client, "Summary Angler")
-    await api_client.post(READY, json={"path": key}, headers=SECRET)
+    stream_id = (
+        await api_client.post(READY, json={"path": key}, headers=SECRET)
+    ).json()["stream_id"]
 
     resp = await api_client.get("/api/streams")
-    angler = resp.json()[0]["angler"]
+    entry = next(s for s in resp.json() if s["id"] == stream_id)
+    angler = entry["angler"]
     assert angler["slug"] == slug
     assert angler["display_name"] == "Summary Angler"
     assert "id" in angler and "avatar_url" in angler

@@ -35,7 +35,18 @@ services:
     restart: unless-stopped
 
   mediamtx:
-    image: bluenviron/mediamtx:latest
+    build:
+      context: ./infra/mediamtx
+    environment:
+      # MTX_* env vars override mediamtx.yml keys. The auth callback URL is
+      # injected here (with the shared secret as a query param) so the secret
+      # never lands in the committed config file.
+      MTX_AUTHHTTPADDRESS: http://backend:8000/api/internal/mediamtx/auth?secret=${MEDIAMTX_WEBHOOK_SECRET}
+      # Used by the runOnReady/runOnNotReady hook scripts.
+      BACKEND_BASE_URL: http://backend:8000
+      WEBHOOK_SECRET: ${MEDIAMTX_WEBHOOK_SECRET}
+    depends_on:
+      - backend
     volumes:
       - ./infra/mediamtx/mediamtx.yml:/mediamtx.yml:ro
       - ./data/hls:/recordings

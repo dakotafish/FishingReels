@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
 from app.api.routes import anglers, health, mediamtx_hooks, stream_keys, streams
+from app.core.logging import install_log_redaction
+
+install_log_redaction()
 
 app = FastAPI(title="FishingReels API")
 

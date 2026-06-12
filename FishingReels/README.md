@@ -6,7 +6,7 @@ Media-first competitive fishing platform.
 
 - **Backend:** FastAPI + SQLAlchemy 2 (async), Postgres 16
 - **Frontend:** React + Vite + TypeScript + Tailwind v4 + shadcn/ui + react-router (Vitest for tests). Castline design system — see [`../DesignSystem/DesignSystemMap.md`](../DesignSystem/DesignSystemMap.md).
-- **Streaming:** MediaMTX ingest (SRT), Nginx HLS delivery (prod)
+- **Streaming:** MediaMTX ingest (SRT) with backend-verified stream keys; in-container ffmpeg packager writes event-HLS (rewindable live + VOD) to disk; nginx delivery
 - **Orchestration:** Docker Compose (base + override pattern, separate prod file)
 
 ## Quick start (dev)
@@ -25,8 +25,7 @@ Then:
 - API docs: http://localhost:8000/docs
 - Health: http://localhost:5173/api/health (via Vite proxy) or http://localhost:8000/api/health (direct)
 - Postgres: localhost:5432 (user/db from `.env`)
-- MediaMTX HLS: http://localhost:8888 (or via Vite proxy at /streams/*)
-- MediaMTX SRT ingest: srt://localhost:8890 (UDP)
+- MediaMTX SRT ingest: srt://localhost:8890 (UDP; publishes require a stream key)
 - MediaMTX API: http://localhost:9997
 
 ## Quick start (prod-like local)
@@ -69,7 +68,9 @@ Stop with `make prod-down`.
 
 ## Streaming
 
-Phones run Moblin and publish via SRT to `srt://<host>:8890?streamid=publish:<stream-name>`. MediaMTX writes HLS segments to `./data/hls/<stream-name>/` on the host. In dev, the same MediaMTX process serves those segments at port 8888. In prod, nginx serves them at `/streams/<stream-name>/index.m3u8`.
+Each angler publishes with a personal **stream key** (mint via `POST /api/anglers/<slug>/stream-keys` — the secret is shown once; see the [dev guide](../Docs/dev-guide.md)). Phones run Moblin (**H.264 + AAC** — not HEVC) and publish via SRT to `srt://<host>:8890?streamid=publish:<key>`.
+
+The backend authorizes every publish (unknown/revoked keys are rejected at the SRT handshake) and registers a `Stream` row. An ffmpeg packager inside the MediaMTX container then writes append-only event-HLS to `./data/hls/<stream-id>/` — viewers can scrub back to the start while the stream is live, and when it ends the finalized playlist becomes the VOD at the same URL (`/streams/<stream-id>/index.m3u8`, served by nginx in prod).
 
 ## Documentation
 

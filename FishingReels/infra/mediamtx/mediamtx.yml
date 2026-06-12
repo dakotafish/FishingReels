@@ -1,30 +1,45 @@
-# MediaMTX config — SRT ingest, HLS serve, segments persisted to disk
-# Reference: https://github.com/bluenviron/mediamtx
+# MediaMTX config — SRT ingest with backend-verified publish auth.
+#
+# HLS is NOT served by MediaMTX: the runOnReady hook spawns an ffmpeg packager
+# (scripts/on-ready.sh) that writes event-style HLS to /recordings/<stream id>/
+# on disk, where nginx serves it (dev `hls` service / prod edge). One source of
+# truth on disk; the same playlist is live-rewind and, once finalized, the VOD.
+# Reference: https://mediamtx.org/docs/
 
-# --- Disable protocols we don't use ---
-rtsp: no
+# --- Protocols ---
+rtsp: yes                      # the packager's pull protocol
+rtspAddress: 127.0.0.1:8554    # loopback-only; never published by compose
+rtspTransports: [tcp]
 rtmp: no
 webrtc: no
+moq: no                        # Media-over-QUIC; on by default since v1.19
+hls: no                        # replaced entirely by the ffmpeg packager
 
 # --- SRT ingest ---
 srt: yes
 srtAddress: :8890
 
-# --- HLS server (dev: serves segments directly; prod: nginx reads from disk) ---
-hls: yes
-hlsAddress: :8888
-hlsAlwaysRemux: yes
-hlsVariant: lowLatency
-hlsSegmentDuration: 1s
-hlsPartDuration: 200ms
-hlsSegmentCount: 7
-hlsDirectory: /recordings
-
-# --- API (read-only stats/health) ---
+# --- API (read-only stats/health; port published in dev only) ---
 api: yes
 apiAddress: :9997
 
-# --- Paths: accept any incoming stream name from publishers ---
+# --- Publish auth: reject-at-the-door via the backend ---
+# The backend accepts a publish only when the path matches an active stream
+# key linked to an angler. authHTTPAddress is injected via MTX_AUTHHTTPADDRESS
+# in compose so the webhook secret never lands in this committed file.
+authMethod: http
+authHTTPExclude:
+- action: api
+- action: metrics
+- action: pprof
+- action: read    # the only reader is the packager's loopback RTSP pull
+
+# --- Paths: any name; the path IS the stream key, validated by the auth hook ---
 paths:
   all_others:
-    # No auth in dev. Production should set publishUser/publishPass on specific paths.
+    # Registers the stream with the backend, then execs the ffmpeg packager.
+    # MediaMTX sends SIGINT when the publish stops -> ffmpeg finalizes the
+    # event playlist (#EXT-X-ENDLIST) -> the recording becomes the VOD.
+    runOnReady: /usr/local/bin/on-ready.sh
+    runOnReadyRestart: no      # a restart would clobber the event playlist
+    runOnNotReady: /usr/local/bin/on-not-ready.sh
