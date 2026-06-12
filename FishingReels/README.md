@@ -25,6 +25,7 @@ Then:
 - API docs: http://localhost:8000/docs
 - Health: http://localhost:5173/api/health (via Vite proxy) or http://localhost:8000/api/health (direct)
 - Postgres: localhost:5432 (user/db from `.env`)
+- HLS file server: http://localhost:8888 (nginx, serves `./data/hls`; also via Vite proxy at `/streams/*.m3u8` etc.)
 - MediaMTX SRT ingest: srt://localhost:8890 (UDP; publishes require a stream key)
 - MediaMTX API: http://localhost:9997
 

@@ -66,10 +66,11 @@ Notes on the top level:
 ```
 infra/
 ├── nginx/
-│   ├── Dockerfile              # multi-stage: builds React, bakes into nginx
+│   ├── Dockerfile              # multi-stage: builds React, bakes into nginx (prod edge)
 │   ├── nginx.conf              # top-level config
+│   ├── dev-hls.conf            # dev-only `hls` service: serves ./data/hls on :8888
 │   └── conf.d/
-│       └── fishingreels.conf   # routes: /, /api/*, /streams/*
+│       └── fishingreels.conf   # routes: /, /api/*, /streams/*.{m3u8,m4s,mp4,ts}
 │
 ├── mediamtx/
 │   ├── Dockerfile              # pinned bluenviron/mediamtx -ffmpeg + curl/jq + hook scripts
@@ -183,7 +184,7 @@ apps/frontend/
 ├── Dockerfile.dev              # `npm run dev` for compose
 ├── package.json
 ├── tsconfig*.json              # split app / node configs
-├── vite.config.ts              # dev proxy: /api → backend, /streams → mediamtx; Vitest `test` block
+├── vite.config.ts              # dev proxy: /api → backend, /streams media files → hls; Vitest `test` block
 ├── eslint.config.js
 ├── components.json             # shadcn config
 ├── index.html
@@ -224,8 +225,9 @@ In dev, nginx is **not** in the stack. Vite is the edge:
 ```
 Browser
   ├── http://localhost:5173        → Vite dev server (HMR)
-  │     ├── proxies /api/*         → backend:8000
-  │     └── proxies /streams/*     → mediamtx:8888 (HLS)
+  │     ├── proxies /api/*                          → backend:8000
+  │     └── proxies /streams/*.{m3u8,m4s,mp4,ts}    → hls:80 (nginx file server)
+  │         (extension-less /streams* = SPA routes → index.html)
   └── http://localhost:8000/docs   → FastAPI Swagger UI (direct access)
 ```
 

@@ -21,7 +21,18 @@ services:
       - frontend_node_modules:/app/node_modules
     environment:
       VITE_API_TARGET: http://backend:8000
-      VITE_STREAMS_TARGET: http://mediamtx:8888
+      VITE_STREAMS_TARGET: http://hls:80
+
+  # Dev HLS file server: serves the packager's recordings the same way the
+  # prod edge does (same headers, same /streams/* URL contract via Vite).
+  hls:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./infra/nginx/dev-hls.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./data/hls:/var/streams:ro
+    ports:
+      - "8888:80"       # direct debug access (same port MediaMTX HLS used to own)
+    restart: unless-stopped
 
   mediamtx:
     ports:

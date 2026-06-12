@@ -24,7 +24,10 @@ export default defineConfig(({ mode }) => {
           target: apiTarget,
           changeOrigin: true,
         },
-        '/streams': {
+        // Only HLS *files* are proxied (keys starting with ^ are RegExp).
+        // Extension-less /streams and /streams/:id are SPA page routes and
+        // must fall through to index.html.
+        '^/streams/.*\\.(m3u8|m4s|mp4|ts)$': {
           target: streamsTarget,
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/streams/, ''),
