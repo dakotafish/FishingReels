@@ -4,9 +4,7 @@ import { Stripe } from "@/components/layout/stripe"
 import logoBlue from "@/assets/brand/logo-blue.png"
 
 const FOOTER_NAV = [
-  { key: "tournaments", label: "Tournaments" },
   { key: "anglers", label: "Anglers" },
-  { key: "expos", label: "Expos" },
   { key: "about", label: "About" },
 ]
 

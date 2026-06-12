@@ -198,9 +198,9 @@ apps/frontend/
     ├── components/
     │   ├── ui/                 # shadcn-style primitives (button, card, badge-live, icon, chip)
     │   ├── layout/             # chrome (header + drawer, footer, stripe, container, site-layout)
-    │   ├── sections/           # home bands (hero, tournament-bar, section-band, feature-split)
+    │   ├── sections/           # home bands (hero, section-band, feature-split)
     │   └── angler/             # roster (avatar, card, row, view-toggle)
-    ├── hooks/                  # data hooks (use-anglers)
+    ├── hooks/                  # data hooks (use-anglers, use-streams, use-stream, use-live-now)
     ├── lib/
     │   ├── utils.ts            # cn() helper
     │   ├── avatar.ts           # deterministic avatar trio + initials

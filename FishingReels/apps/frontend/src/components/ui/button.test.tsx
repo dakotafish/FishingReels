@@ -5,9 +5,9 @@ import { Button } from "./button"
 
 describe("Button", () => {
   it("renders its label", () => {
-    render(<Button>Watch tournament</Button>)
+    render(<Button>Watch live</Button>)
     expect(
-      screen.getByRole("button", { name: "Watch tournament" }),
+      screen.getByRole("button", { name: "Watch live" }),
     ).toBeInTheDocument()
   })
 

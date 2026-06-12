@@ -11,8 +11,8 @@ describe("BadgeLive", () => {
   })
 
   it("accepts a custom label", () => {
-    render(<BadgeLive>LIVE · DAY 2</BadgeLive>)
-    expect(screen.getByText("LIVE · DAY 2")).toBeInTheDocument()
+    render(<BadgeLive>On Air</BadgeLive>)
+    expect(screen.getByText("On Air")).toBeInTheDocument()
   })
 
   it("pulses the dot but disables animation under reduced motion", () => {

@@ -23,7 +23,7 @@ describe("AppRoutes", () => {
         <AppRoutes />
       </MemoryRouter>,
     )
-    expect(screen.getByRole("heading", { name: /^Every angler/ })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: /^Every angler/i })).toBeInTheDocument()
   })
 
   it("renders the anglers page at /anglers", () => {

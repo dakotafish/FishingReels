@@ -34,7 +34,7 @@ function AnglersPage() {
         </Wrap>
       </section>
 
-      <section className="bg-cl-paper py-[76px] max-[640px]:py-11">
+      <section className="bg-cl-sand py-[76px] max-[640px]:py-11">
         <Wrap>
           <div className="mb-[38px] flex items-center justify-between max-[640px]:mb-[22px]">
             <span className="font-label text-[13px] font-extrabold tracking-[0.13em] text-cl-deep-blue uppercase">

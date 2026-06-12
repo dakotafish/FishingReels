@@ -1,23 +1,21 @@
 import { Outlet, useLocation, useNavigate } from "react-router"
 
+import { useLiveNow } from "@/hooks/use-live-now"
 import { Header } from "./header"
 import { Footer } from "./footer"
 
 // Maps the Header/Footer nav keys to routes. Sections that aren't built yet
-// (tournaments, expos, about, sign-in) fall back to home for now.
+// (about) fall back to home for now.
 const ROUTES: Record<string, string> = {
   home: "/",
   anglers: "/anglers",
-  search: "/anglers",
-  tournaments: "/",
-  expos: "/",
   about: "/",
   live: "/streams",
-  signin: "/",
 }
 
 function SiteLayout() {
   const navigate = useNavigate()
+  const live = useLiveNow()
   const { pathname } = useLocation()
   const active =
     pathname === "/"
@@ -32,7 +30,7 @@ function SiteLayout() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header active={active} onNav={onNav} />
+      <Header active={active} live={live} onNav={onNav} />
       <main className="flex-1">
         <Outlet />
       </main>

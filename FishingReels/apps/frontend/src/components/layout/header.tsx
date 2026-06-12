@@ -1,12 +1,8 @@
 import * as React from "react"
 import {
   Info,
-  LogIn,
   Menu,
   Radio,
-  Search,
-  Store,
-  Trophy,
   Users,
   X,
   type LucideIcon,
@@ -25,23 +21,20 @@ type DrawerItem = NavItem & { icon: LucideIcon; badge?: string }
 
 // Top-level nav uses one vocabulary across web and the drawer.
 const NAV: NavItem[] = [
-  { key: "tournaments", label: "Tournaments" },
   { key: "anglers", label: "Anglers" },
-  { key: "expos", label: "Expos" },
   { key: "about", label: "About" },
 ]
 
 const DRAWER: DrawerItem[] = [
-  { key: "tournaments", label: "Tournaments", icon: Trophy },
   { key: "anglers", label: "Anglers", icon: Users },
-  { key: "expos", label: "Expos", icon: Store },
   { key: "live", label: "Live", icon: Radio, badge: "On Air" },
   { key: "about", label: "About", icon: Info },
-  { key: "signin", label: "Sign In", icon: LogIn },
 ]
 
 type HeaderProps = {
   active?: string
+  /** Whether any stream is live right now — drives the LIVE / On Air badges. */
+  live?: boolean
   onNav?: (key: string) => void
 }
 
@@ -71,10 +64,12 @@ function NavLink({
 function DrawerLink({
   item,
   active,
+  live,
   onNav,
 }: {
   item: DrawerItem
   active?: string
+  live?: boolean
   onNav: (key: string) => void
 }) {
   const isActive = active === item.key
@@ -95,14 +90,14 @@ function DrawerLink({
         )}
       />
       <span>{item.label}</span>
-      {item.badge && (
+      {item.badge && live && (
         <BadgeLive className="ml-auto px-2.5 py-1 text-[10px]">{item.badge}</BadgeLive>
       )}
     </button>
   )
 }
 
-function Header({ active, onNav = () => {} }: HeaderProps) {
+function Header({ active, live = false, onNav = () => {} }: HeaderProps) {
   const [menuOpen, setMenuOpen] = React.useState(false)
 
   // Lock body scroll while the drawer is open.
@@ -136,36 +131,29 @@ function Header({ active, onNav = () => {} }: HeaderProps) {
           {NAV.map((item) => (
             <NavLink key={item.key} item={item} active={active} onNav={onNav} />
           ))}
-          <span className="h-4 w-px bg-cl-ink/30" />
-          <NavLink
-            item={{ key: "signin", label: "Sign In" }}
-            active={active}
-            onNav={onNav}
-          />
-          <BadgeLive
-            onClick={() => onNav("live")}
-            className="cursor-pointer px-3 py-1.5 text-[11px]"
-          >
-            LIVE · DAY 2
-          </BadgeLive>
-          <button
-            type="button"
-            aria-label="Search"
-            onClick={() => onNav("search")}
-            className="flex cursor-pointer text-cl-near-black transition-colors hover:text-cl-flame"
-          >
-            <Icon icon={Search} size={19} />
-          </button>
+          {live && (
+            <>
+              <span className="h-4 w-px bg-cl-ink/30" />
+              <BadgeLive
+                onClick={() => onNav("live")}
+                className="cursor-pointer px-3 py-1.5 text-[11px]"
+              >
+                LIVE
+              </BadgeLive>
+            </>
+          )}
         </nav>
 
-        {/* Mobile cluster: pinned LIVE badge + hamburger */}
+        {/* Mobile cluster: pinned LIVE badge (when live) + hamburger */}
         <div className="ml-auto hidden items-center gap-3 max-[820px]:flex">
-          <BadgeLive
-            onClick={() => onNav("live")}
-            className="cursor-pointer px-3 py-1.5 text-[11px]"
-          >
-            LIVE · DAY 2
-          </BadgeLive>
+          {live && (
+            <BadgeLive
+              onClick={() => onNav("live")}
+              className="cursor-pointer px-3 py-1.5 text-[11px]"
+            >
+              LIVE
+            </BadgeLive>
+          )}
           <button
             type="button"
             aria-label="Open menu"
@@ -211,19 +199,17 @@ function Header({ active, onNav = () => {} }: HeaderProps) {
 
           <nav className="relative flex flex-col px-4 py-1.5">
             {DRAWER.map((item) => (
-              <DrawerLink key={item.key} item={item} active={active} onNav={go} />
+              <DrawerLink
+                key={item.key}
+                item={item}
+                active={active}
+                live={live}
+                onNav={go}
+              />
             ))}
           </nav>
 
-          <div className="relative mt-auto border-t-[2.5px] border-cl-flame px-5 pt-[18px] pb-[26px]">
-            <button
-              type="button"
-              onClick={() => go("search")}
-              className="flex w-full cursor-pointer items-center gap-[11px] rounded-pill bg-cl-paper px-[18px] py-[14px] font-sans text-[14px] font-medium text-cl-deep-blue"
-            >
-              <Icon icon={Search} size={18} /> Search anglers, events…
-            </button>
-          </div>
+          <div className="relative mt-auto border-t-[2.5px] border-cl-flame pb-[26px]" />
         </div>
       )}
     </header>

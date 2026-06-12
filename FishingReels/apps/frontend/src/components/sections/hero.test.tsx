@@ -25,9 +25,9 @@ describe("Hero", () => {
   it("renders children below the title grid", () => {
     render(
       <Hero title="Title">
-        <div>tournament bar slot</div>
+        <div>announcement bar slot</div>
       </Hero>,
     )
-    expect(screen.getByText("tournament bar slot")).toBeInTheDocument()
+    expect(screen.getByText("announcement bar slot")).toBeInTheDocument()
   })
 })

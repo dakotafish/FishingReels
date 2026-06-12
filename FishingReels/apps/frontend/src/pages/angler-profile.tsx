@@ -13,8 +13,7 @@ function AnglerProfilePage() {
           Angler profile
         </h1>
         <p className="mt-4 font-label text-[13px] tracking-[0.1em] text-cl-deep-blue uppercase">
-          Profile for “{slug}” — coming soon. Stats and recent casts are deferred
-          until tournament data exists.
+          Profile for “{slug}” — coming soon.
         </p>
       </Wrap>
     </section>

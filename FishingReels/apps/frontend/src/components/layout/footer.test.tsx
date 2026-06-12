@@ -8,7 +8,7 @@ describe("Footer", () => {
     render(<Footer />)
     expect(screen.getByAltText("Castline")).toBeInTheDocument()
     expect(screen.getByText("2026 Castline Media")).toBeInTheDocument()
-    for (const label of ["Tournaments", "Anglers", "Expos", "About", "Terms", "Privacy"]) {
+    for (const label of ["Anglers", "About", "Terms", "Privacy"]) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument()
     }
   })

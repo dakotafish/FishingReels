@@ -10,7 +10,7 @@ type HeroProps = {
   lede?: React.ReactNode
   /** Right-side fish emblem (hidden ≤980px). */
   showEmblem?: boolean
-  /** Rendered in the wrap below the title grid — e.g. a TournamentBar. */
+  /** Rendered in the wrap below the title grid — e.g. an announcement bar. */
   children?: React.ReactNode
   className?: string
 }

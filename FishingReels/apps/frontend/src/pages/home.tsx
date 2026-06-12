@@ -4,7 +4,6 @@ import type { Angler } from "@/api/client"
 import { useAnglers } from "@/hooks/use-anglers"
 import { Button } from "@/components/ui/button"
 import { Hero } from "@/components/sections/hero"
-import { TournamentBar } from "@/components/sections/tournament-bar"
 import { SectionBand, SectionLink } from "@/components/sections/section-band"
 import { FeatureSplit } from "@/components/sections/feature-split"
 import { AnglerCard } from "@/components/angler/angler-card"
@@ -19,17 +18,9 @@ function HomePage() {
   return (
     <>
       <Hero
-        title="Every angler. Every cast. Every story."
-        lede="Live tournament coverage, angler profiles, and the stories behind every catch."
-      >
-        <div className="pb-[68px] max-[640px]:pb-9">
-          <TournamentBar title="Pro Series Championship" meta="LIVE · DAY 2">
-            <Button variant="cta" onClick={() => navigate("/")}>
-              Watch tournament
-            </Button>
-          </TournamentBar>
-        </div>
-      </Hero>
+        title="Every Angler. Every Cast. Every Story."
+        lede="For too long, competitive fishing has only shown fans a fraction of the action. Castline changes that — connecting viewers to every angler, every moment, and every story unfolding on the water in real time."
+      />
 
       <SectionBand
         tone="sky"
@@ -54,7 +45,7 @@ function HomePage() {
       </SectionBand>
 
       <FeatureSplit
-        title="Every cast. Every story."
+        title="See every cast"
         copy="From the weigh-in to the water, follow the anglers who define the sport."
         image={featurePhoto}
       >
