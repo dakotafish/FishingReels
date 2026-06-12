@@ -14,3 +14,5 @@ export type HealthResponse =
   paths['/api/health']['get']['responses']['200']['content']['application/json']
 
 export type Angler = components['schemas']['AnglerRead']
+
+export type Stream = components['schemas']['StreamRead']

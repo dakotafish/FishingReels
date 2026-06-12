@@ -70,6 +70,38 @@ curl -s -X DELETE localhost:8000/api/anglers/<slug>/stream-keys/<key-id>  # revo
 
 The full secret appears **once**, in the mint response — save it then. Listings carry metadata plus a `key_hint` (last 4 chars) only. Lost key → mint a replacement and revoke the old one (revocation is a status flip, so an in-flight stream can still close out cleanly).
 
+## Going live (and faking it)
+
+**Real phone (Moblin):** SRT URL `srt://<host>:8890`, streamid `publish:<key>` — where `<key>` is the `key` value from the mint response above ("Issuing a stream key"), saved at mint time since it's only shown once. Example: key `xK3vR9_...gU` → streamid `publish:xK3vR9_...gU`. The codec **must be H.264/AVC + AAC — not HEVC**: the packager is a pure remux (`-c copy`), and HEVC HLS won't play in hls.js/most browsers.
+
+**Fake publisher (no phone needed)** — runs inside the MediaMTX container, which ships ffmpeg:
+
+```bash
+docker compose exec mediamtx ffmpeg -re \
+  -f lavfi -i testsrc2=size=1280x720:rate=30 \
+  -f lavfi -i 'sine=frequency=440:sample_rate=48000' \
+  -c:v libx264 -preset ultrafast -tune zerolatency -g 60 -b:v 1500k \
+  -c:a aac -b:a 128k \
+  -f mpegts 'srt://127.0.0.1:8890?streamid=publish:<KEY>'
+```
+
+Watch at http://localhost:5173/streams — you can scrub back to the start while live (the playlist is event-style, ~15–20s behind real time). Stop the publisher (`q` / Ctrl-C) and the same watch URL plays as the VOD.
+
+Under the hood: the auth hook gates the publish → `/ready` creates the `Stream` row → ffmpeg writes `./data/hls/<stream-id>/` → on stop, `#EXT-X-ENDLIST` is appended and the row is marked `ended`.
+
+**Reconnects:** publishing again with the same key (e.g. Moblin retrying after a network drop) takes over the MediaMTX path — the old `Stream` row is swept to `ended` and a fresh row + recording dir starts. One key, many sessions, each its own VOD.
+
+**Debugging the hooks:**
+
+```bash
+docker compose logs -f mediamtx backend   # auth rejections + hook script stderr
+ls data/hls/.sessions/                    # one file per in-flight session (key -> stream id)
+# exercise a hook by hand:
+curl -X POST localhost:8000/api/internal/mediamtx/ready \
+  -H "X-Webhook-Secret: <your MEDIAMTX_WEBHOOK_SECRET>" \
+  -H 'Content-Type: application/json' -d '{"path":"<key>"}'
+```
+
 ## Frontend components (shadcn)
 
 ```bash

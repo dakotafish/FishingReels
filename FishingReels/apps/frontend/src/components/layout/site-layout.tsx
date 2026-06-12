@@ -4,7 +4,7 @@ import { Header } from "./header"
 import { Footer } from "./footer"
 
 // Maps the Header/Footer nav keys to routes. Sections that aren't built yet
-// (tournaments, expos, about, live, sign-in) fall back to home for now.
+// (tournaments, expos, about, sign-in) fall back to home for now.
 const ROUTES: Record<string, string> = {
   home: "/",
   anglers: "/anglers",
@@ -12,7 +12,7 @@ const ROUTES: Record<string, string> = {
   tournaments: "/",
   expos: "/",
   about: "/",
-  live: "/",
+  live: "/streams",
   signin: "/",
 }
 
@@ -20,7 +20,13 @@ function SiteLayout() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const active =
-    pathname === "/" ? "home" : pathname.startsWith("/anglers") ? "anglers" : ""
+    pathname === "/"
+      ? "home"
+      : pathname.startsWith("/anglers")
+        ? "anglers"
+        : pathname.startsWith("/streams")
+          ? "live"
+          : ""
 
   const onNav = (key: string) => navigate(ROUTES[key] ?? "/")
 
