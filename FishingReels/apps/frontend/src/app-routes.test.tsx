@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router"
 
 import { AppRoutes } from "./app-routes"
+import { makeAngler } from "@/test/fixtures"
 
 beforeEach(() => {
   // both home and anglers pages fetch the roster on mount
@@ -35,15 +36,30 @@ describe("AppRoutes", () => {
     expect(screen.getByRole("heading", { name: "Anglers" })).toBeInTheDocument()
   })
 
-  it("renders the profile placeholder at /anglers/:slug", () => {
+  it("renders the angler profile at /anglers/:slug", async () => {
+    // URL-aware: the profile fetch returns an angler; /streams stays empty.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) =>
+        Promise.resolve({
+          ok: true,
+          json: async () =>
+            String(url).includes("/anglers/")
+              ? makeAngler({
+                  display_name: "Jordan Wheeler",
+                  slug: "jordan-wheeler",
+                })
+              : [],
+        }),
+      ),
+    )
     render(
       <MemoryRouter initialEntries={["/anglers/jordan-wheeler"]}>
         <AppRoutes />
       </MemoryRouter>,
     )
     expect(
-      screen.getByRole("heading", { name: "Angler profile" }),
+      await screen.findByRole("heading", { name: "Jordan Wheeler" }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/jordan-wheeler/)).toBeInTheDocument()
   })
 })

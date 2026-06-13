@@ -199,8 +199,9 @@ apps/frontend/
     │   ├── ui/                 # shadcn-style primitives (button, card, badge-live, icon, chip)
     │   ├── layout/             # chrome (header + drawer, footer, stripe, container, site-layout)
     │   ├── sections/           # home bands (hero, section-band, feature-split)
-    │   └── angler/             # roster (avatar, card, row, view-toggle)
-    ├── hooks/                  # data hooks (use-anglers, use-streams, use-stream, use-live-now)
+    │   ├── angler/             # roster + profile (avatar, card, row, view-toggle, profile-header)
+    │   └── stream/             # video player + recent-cast tile (stream-player, recent-cast-card)
+    ├── hooks/                  # data hooks (use-anglers, use-angler, use-streams, use-stream, use-angler-streams, use-live-now)
     ├── lib/
     │   ├── utils.ts            # cn() helper
     │   ├── avatar.ts           # deterministic avatar trio + initials
